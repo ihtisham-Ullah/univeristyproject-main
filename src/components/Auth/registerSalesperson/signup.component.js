@@ -204,9 +204,9 @@ export default class Register extends Component {
 
   render() {
     return (
-      <div className="auth-wrapper">
-        <div className="auth-inner">
-          <div className="main">
+      <div className="auth-wrapper p-5">
+        <div className="continer mx-5 p-5">
+          <div className="  main">
             <h3>Register Salesperson</h3>
             {this.state.isFormSubmitted ? (
               <div className="details">
@@ -217,10 +217,12 @@ export default class Register extends Component {
               </div>
             ) : (
               <form onSubmit={this.handleSubmit}>
-                <div className="mb-3">
-                  <label>First name</label>
+          <div className="row">
+                <div className=" col-md-6 form-group mb-3">
+                  <label for="firstName">First name</label>
                   <input
                     type="text"
+                    id="firstName"
                     placeholder="First Name"
                     name="firstName"
                     className="form-control"
@@ -233,13 +235,14 @@ export default class Register extends Component {
                     autoComplete="off"
                     required
                   />
-                </div>
 
                 {this.state.firstNameError && (
-                  <div className="errorMsg">{this.state.firstNameError}</div>
-                )}
+                  <small  class="text-danger"> {this.state.firstNameError}  </small>
+                  // <div className="errorMsg">{this.state.firstNameError}</div>
+                  )}
+                  </div>
 
-                <div className="mb-3">
+                <div className=" col-md-6 mb-3">
                   <label>Last name</label>
                   <input
                     type="text"
@@ -255,12 +258,13 @@ export default class Register extends Component {
                     }
                     required
                   />
-                </div>
-                {this.state.lastNameError && (
-                  <div className="errorMsg">{this.state.lastNameError}</div>
+                     {this.state.lastNameError && (
+                  <small className="text-danger">{this.state.lastNameError}</small>
                 )}
+                </div>
+             
 
-                <div className="mb-3">
+                <div className="col-md-6 mb-3">
                   <label>Email Address</label>
                   <input
                     type="email"
@@ -273,12 +277,13 @@ export default class Register extends Component {
                     autoComplete="off"
                     required
                   />
-                </div>
-                {this.state.emailAddressError && (
-                  <div className="errorMsg">{this.state.emailAddressError}</div>
+                                {this.state.emailAddressError && (
+                  <small className=" text-danger">{this.state.emailAddressError}</small>
                 )}
+                </div>
 
-                <div className="mb-3">
+
+                <div className="col-md-6 mb-3">
                   <label>Password</label>
                   <input
                     type="password"
@@ -296,7 +301,7 @@ export default class Register extends Component {
                 {this.state.passwordError && (
                   <div className="errorMsg">{this.state.passwordError}</div>
                 )}
-                <div className="mb-3">
+                <div className="col-md-6 mb-3">
                   <label>Phone Number</label>
 
                   <input
@@ -315,7 +320,7 @@ export default class Register extends Component {
                   <div className="errorMsg">{this.state.phoneError}</div>
                 )}
 
-                <div className="mb-3">
+                <div className="col-md-6 mb-3">
                   <label>Address</label>
                   <input
                     type="text"
@@ -330,10 +335,12 @@ export default class Register extends Component {
                   />
                 </div>
 
-                <div className="d-grid">
+                <div className="col d-flex justify-content-end">
+                  
                   <button type="submit" className="btn btn-primary">
-                    Sign Up
+                    Register
                   </button>
+                </div>
                 </div>
               </form>
             )}

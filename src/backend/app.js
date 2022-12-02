@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs");
 var nodemailer = require("nodemailer");
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
+const { validateUser } = require('./userdetails');
 app.use(cors());
 app.use(express.json());
 const jwt = require("jsonwebtoken");
@@ -27,7 +28,11 @@ require("./userdetails");
 
 const User = mongoose.model("Userinfo");
 
+
 app.post("/register", async (req, res) => {
+  const { error  } = validateUser(req.body);
+  if(error) return res.status(400).send(error.details[0].message);
+
   const { firstName, lastName, email, password, address, phoneNo } = req.body;
   const encryptedPassword = await bcrypt.hash(password, 10);
   try {
@@ -53,6 +58,7 @@ require("./adminDetail");
 const Admin = mongoose.model("Admininfo");
 
 app.post("/login-user", async (req, res) => {
+  
   const { email, password } = req.body;
 
   const user = await Admin.findOne({ email });
