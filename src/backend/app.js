@@ -6,7 +6,8 @@ const bcrypt = require("bcryptjs");
 var nodemailer = require("nodemailer");
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
-const { validateUser } = require('./userdetails');
+const { validateUser } = require("./RegisterSalesperson");
+const { validateAdmin } = require("./adminDetail");
 app.use(cors());
 app.use(express.json());
 const jwt = require("jsonwebtoken");
@@ -24,14 +25,13 @@ mongoose
   })
   .catch((e) => console.log(e));
 
-require("./userdetails");
+require("./RegisterSalesperson");
 
 const User = mongoose.model("Userinfo");
 
-
 app.post("/register", async (req, res) => {
-  const { error  } = validateUser(req.body);
-  if(error) return res.status(400).send(error.details[0].message);
+  const { error } = validateUser(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
 
   const { firstName, lastName, email, password, address, phoneNo } = req.body;
   const encryptedPassword = await bcrypt.hash(password, 10);
@@ -55,10 +55,12 @@ app.post("/register", async (req, res) => {
 });
 
 require("./adminDetail");
+
 const Admin = mongoose.model("Admininfo");
 
 app.post("/login-user", async (req, res) => {
-  
+  const { error } = validateAdmin(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
   const { email, password } = req.body;
 
   const user = await Admin.findOne({ email });
@@ -84,6 +86,7 @@ app.listen(5000, () => {
 });
 
 app.post("/forgot-password", async (req, res) => {
+
   const { email } = req.body;
   try {
     const oldUser = await Admin.findOne({ email });

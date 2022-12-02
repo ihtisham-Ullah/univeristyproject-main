@@ -1,5 +1,5 @@
 //private routes
-import Register from "../components/Auth/registerSalesperson/signup.component";
+import Register from "../components/Auth/registerSalesperson/RegisterSalesperson";
 export const allPrivateAppRoutes = [
   {
     path: "/Register",

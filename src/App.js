@@ -1,17 +1,16 @@
 import { Routes, Route } from "react-router-dom";
 import Layout from "./common/Layout/Layout";
-import LoginPage from "./components/Auth/login/loginComponent";
+import LoginPage from "./components/Auth/login/Login";
 import Sidebar from "../src/common/Layout/SideBar/SideBar";
-import Register from "../src/components/Auth/registerSalesperson/signup.component";
-import Reset from "./components/Auth/resetPassword/reset"; 
+import Register from "../src/components/Auth/registerSalesperson/RegisterSalesperson";
+import Reset from "./components/Auth/resetPassword/reset";
 
 // import { PrivateRoute } from "./utitls/privateRoute";
 import { allPrivateAppRoutes } from "./utitls/AllAppRoutes";
 const App = () => {
   return (
     <div>
-      <Routes> 
-
+      <Routes>
         {/* Original Routes */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/Sidebar" element={<Sidebar />} />

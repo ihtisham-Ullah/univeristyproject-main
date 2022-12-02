@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "./reset.css";
+import Swal from "sweetalert2";
 export default class Reset extends Component {
   constructor(props) {
     super(props);
@@ -29,9 +30,9 @@ export default class Reset extends Component {
       .then((res) => res.json())
       .then((data) => {
         if (data.status !== "ok") {
-          alert("Email not valid");
+          Swal.fire("Invalid Email!", "", "error");
         } else {
-          alert("Email sent");
+          Swal.fire("Email Sent!", "", "success");
           // window.location.href = "./sign-up";
         }
       });

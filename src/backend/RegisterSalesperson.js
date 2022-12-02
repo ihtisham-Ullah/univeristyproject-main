@@ -16,10 +16,10 @@ const userDetailSchema = new mongoose.Schema(
 );
 function validateUser(user) {
   const schema = Joi.object({
-    firstName: Joi.string().min(5).max(50).required(),
-    lastName: Joi.string().min(5).max(50).required(),
-    email: Joi.string().min(5).max(255).required().email(),
-    password: Joi.string().min(8).max(255).required(),
+    firstName: Joi.string().min(2).max(50).required(),
+    lastName: Joi.string().min(2).max(50).required(),
+    email: Joi.string().min(2).max(255).required().email(),
+    password: Joi.string().min(3).max(255).required(),
     address: Joi.string().min(5).max(50).required(),
     phoneNo: Joi.string().min(5).max(50).required(),
 
