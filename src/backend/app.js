@@ -21,7 +21,7 @@ mongoose
     useNewUrlParser: true,
   })
   .then(() => {
-    console.log("connected to server");
+    console.log("connected to Database");
   })
   .catch((e) => console.log(e));
 
@@ -54,6 +54,16 @@ app.post("/register", async (req, res) => {
   }
 });
 
+app.get("/getsalesperson", async (req, res) => {
+  try {
+    const data = await User.find();
+    console.log(data);
+    res.send({ data });
+  } catch (error) {
+    res.send({ status: "Error" });
+  }
+});
+
 require("./adminDetail");
 
 const Admin = mongoose.model("Admininfo");
@@ -73,7 +83,7 @@ app.post("/login-user", async (req, res) => {
   if (ismatch) {
     const token = jwt.sign({}, JWT_SECRET);
     if (res.status(201)) {
-      return res.json({ status: "ok", data: token });
+      return res.json({ status: "ok", data: token, user: user });
     } else {
       return res.json({ status: "error  " });
     }
@@ -86,7 +96,6 @@ app.listen(5000, () => {
 });
 
 app.post("/forgot-password", async (req, res) => {
-
   const { email } = req.body;
   try {
     const oldUser = await Admin.findOne({ email });
@@ -109,7 +118,7 @@ app.post("/forgot-password", async (req, res) => {
     //faltoo tabs remove kro okk. mei call lrdo? sure us
     var mailOptions = {
       from: "workforce@gmail.com",
-      to: "ihtishamshami180@gmail.com",
+      to: "zalankhan180@gmail.com",
       subject: "Password Reset",
       text: link,
     };

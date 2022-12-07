@@ -19,9 +19,7 @@ const Layout = (props) => {
       />
       <div className="right-area-content">
         <main className="main-content">
-          <Fragment>
-           { <reset />}
-          </Fragment>
+          <Fragment></Fragment>
         </main>
       </div>
     </div>

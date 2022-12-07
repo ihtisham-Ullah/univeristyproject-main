@@ -2,6 +2,7 @@
 
 * {
   box-sizing: border-box;
+  /* i will sugest you global style use in index.css beacuse react render same css in all component or you use style comonent  */
 }
 body {
   min-height: 100vh;

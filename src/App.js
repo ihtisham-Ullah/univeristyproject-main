@@ -4,19 +4,27 @@ import LoginPage from "./components/Auth/login/Login";
 import Sidebar from "../src/common/Layout/SideBar/SideBar";
 import Register from "../src/components/Auth/registerSalesperson/RegisterSalesperson";
 import Reset from "./components/Auth/resetPassword/reset";
-
-// import { PrivateRoute } from "./utitls/privateRoute";
+import Notification from "./components/notification/Notification";
+import ProtectedRoutes from "./components/protective/ProtectiveRoutes";
+import Attendance from "./components/Auth/attendance/Attendance";
+import Nopage from "./Nopage";
 import { allPrivateAppRoutes } from "./utitls/AllAppRoutes";
+
 const App = () => {
   return (
-    <div>
+    <>
       <Routes>
         {/* Original Routes */}
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/Sidebar" element={<Sidebar />} />
+          <Route path="/notification" element={<Notification />} />
+          <Route path="/Layout" element={Layout} />
+          <Route path="/Register" element={<Register />} />
+          <Route path="/Attendance" element={<Attendance />} />
+        </Route>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/Sidebar" element={<Sidebar />} />
-        <Route path="/Layout" element={<Layout />} />
-        <Route path="/Register" element={<Register />} />
         <Route path="/Reset" element={<Reset />} />
+        <Route path="*" element={<Nopage />} />
       </Routes>
 
       <Routes>
@@ -28,8 +36,7 @@ const App = () => {
           );
         })}
       </Routes>
-    </div>
+    </>
   );
 };
-
 export default App;

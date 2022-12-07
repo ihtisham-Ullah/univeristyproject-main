@@ -3,10 +3,11 @@ import "../../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./register.css";
 import Swal from "sweetalert2";
 const emailValidator =
-  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+.[a-zA-Z]*$/;
 const passwordValidator =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{2,64}$/;
 const NameValidator = /^[a-z]+$/;
+const AddressValidator = /^[a-zA-Z0-9-]$/;
 const phoneValidator =
   /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
 
@@ -15,14 +16,15 @@ export default class Register extends Component {
     super(props);
     this.state = {
       firstName: "",
+      firstNameError: "",
       lastName: "",
       email: "",
-      password: "",
+      emailAddressError: "",
       address: "",
+      addressError: "",
       phoneNo: "",
       phoneError: "",
-      firstNameError: "",
-      emailAddressError: "",
+      password: "",
       passwordError: "",
       isFormSubmitted: false,
     };
@@ -34,6 +36,7 @@ export default class Register extends Component {
     this.validateEmailAddress = this.validateEmailAddress.bind(this);
     this.validatePassword = this.validatePassword.bind(this);
     this.validatephoneNo = this.validatephoneNo.bind(this);
+    this.validateAddress = this.validateAddress.bind(this);
   }
   handleChange(event) {
     const { name, value } = event.target;
@@ -74,19 +77,16 @@ export default class Register extends Component {
     if (isValid) this.setState({ isFormSubmitted: true });
     else this.setState({ isFormSubmitted: false });
     if (!this.validateFirstName()) {
-      alert("Invalid First Name");
     }
     if (!this.validateLastName()) {
-      alert("Invalid Last Name");
     }
     if (!this.validateEmailAddress()) {
-      alert("Invalid Email Address");
     }
     if (!this.validatePassword()) {
-      alert("Invalid Password");
     }
     if (!this.validatephoneNo()) {
-      alert("Invalid Phone Number");
+    }
+    if (!this.validateAddress()) {
     } else {
       fetch("http://localhost:5000/register", {
         method: "POST",
@@ -108,7 +108,11 @@ export default class Register extends Component {
         .then((res) => res.json())
         .then((data) => {
           if (data.status !== "ok") {
-            Swal.fire("Incorrect Data Entered!", "", "error");
+            if (data.error === "User Already Exists") {
+              Swal.fire("User Already Exists!", "", "error");
+            } else {
+              Swal.fire("Incorrect Data Entered!", "", "error");
+            }
           }
           if (data.status === "ok") {
             Swal.fire("Salesperson Registered!", "", "success");
@@ -126,6 +130,7 @@ export default class Register extends Component {
     else if (name === "email") isValid = this.validateEmailAddress();
     else if (name === "password") isValid = this.validatePassword();
     else if (name === "phoneNo") isValid = this.validatephoneNo();
+    else if (name === "address") isValid = this.validateAddress();
     return isValid;
   }
 
@@ -134,15 +139,15 @@ export default class Register extends Component {
     const value = this.state.firstName;
     if (value.trim() === "") {
       firstNameError = "First Name is required";
-    }
-    if (!NameValidator.test(this.state.firstName)) {
-      firstNameError = "Letters allowed only";
-    }
+    } else {
+      if (!NameValidator.test(this.state.firstName)) {
+        firstNameError = "Letters allowed only";
+      }
 
-    if (this.state.firstName.length > 10) {
-      firstNameError = "Maximum length should be 10 letters";
+      if (this.state.firstName.length > 10) {
+        firstNameError = "Maximum length should be 10 letters";
+      }
     }
-
     this.setState({
       firstNameError,
     });
@@ -153,13 +158,14 @@ export default class Register extends Component {
     let lastNameError = "";
     const value = this.state.lastName;
     if (value.trim() === "") lastNameError = "Last Name is required";
-    if (!NameValidator.test(this.state.lastName)) {
-      lastNameError = "Letters allowed only";
+    else {
+      if (!NameValidator.test(this.state.lastName)) {
+        lastNameError = "Letters allowed only";
+      }
+      if (this.state.firstName.length > 10) {
+        lastNameError = "Maximum length should be 10 letters";
+      }
     }
-    if (this.state.firstName.length > 10) {
-      lastNameError = "Maximum length should be 10 letters";
-    }
-
     this.setState({
       lastNameError,
     });
@@ -186,7 +192,7 @@ export default class Register extends Component {
     else if (!passwordValidator.test(value))
       passwordError =
         "Password must contain at least 5 characters, Min 1 number, Min 1 upper and 1 lowercase, Min 1 special character!";
-    if (this.state.password.length < 5) {
+    else if (this.state.password.length < 5) {
       passwordError = "minimum length";
     }
 
@@ -194,6 +200,17 @@ export default class Register extends Component {
       passwordError,
     });
     return passwordError === "";
+  }
+
+  validateAddress() {
+    let addressError = "";
+    const value = this.state.address;
+    if (value.trim() === "") addressError = "Address is required";
+
+    this.setState({
+      addressError,
+    });
+    return addressError === "";
   }
 
   validatephoneNo() {
@@ -215,17 +232,32 @@ export default class Register extends Component {
           <div className="  main">
             <h3>Register Salesperson</h3>
             {this.state.isFormSubmitted ? (
-              <div className="details">
-                <h3>Thanks for signing up, find your details below:</h3>
-                <div>First Name: {this.state.firstName}</div>
-                <div>Last Name: {this.state.lastName}</div>
-                <div>Email Address: {this.state.email}</div>
-              </div>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th> Email Address</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td>{this.state.firstName}</td>
+                    <td>{this.state.lastName}</td>
+                    <td>{this.state.email}</td>
+                    <td>{this.state.phoneNo}</td>
+                    <td>{this.state.address}</td>
+                  </tr>
+                </tbody>
+              </table>
             ) : (
               <form onSubmit={this.handleSubmit}>
                 <div className="row">
                   <div className=" col-md-6 form-group mb-3">
-                    <label for="firstName">First name</label>
+                    <label htmlFor="firstName">First name</label>
                     <input
                       type="text"
                       id="firstName"
@@ -348,6 +380,11 @@ export default class Register extends Component {
                       autoComplete="off"
                       required
                     />
+                    {this.state.addressError && (
+                      <small className=" text-danger">
+                        {this.state.addressError}
+                      </small>
+                    )}
                   </div>
 
                   <div className="col d-flex justify-content-end">

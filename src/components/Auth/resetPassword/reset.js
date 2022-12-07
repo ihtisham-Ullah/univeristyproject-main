@@ -33,7 +33,7 @@ export default class Reset extends Component {
           Swal.fire("Invalid Email!", "", "error");
         } else {
           Swal.fire("Email Sent!", "", "success");
-          // window.location.href = "./sign-up";
+          window.location.href = "http://localhost:3000/";
         }
       });
   }

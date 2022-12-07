@@ -17,7 +17,12 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import FactCheckIcon from "@mui/icons-material/FactCheck";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import AnalyticsIcon from "@mui/icons-material/Analytics";
+import TaskIcon from "@mui/icons-material/Task";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 const drawerWidth = 240;
 
@@ -98,7 +103,7 @@ export default function MiniDrawer({ childprops }) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  console.log("im froim sidebar", childprops);
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -134,12 +139,28 @@ export default function MiniDrawer({ childprops }) {
         <Divider />
         <List>
           {[
-            "Register salesperson",
-            "Attendance",
-            "Notifications",
-            "Leaves",
+            {
+              name: "Register salesperson",
+              icon: <PersonAddIcon onClick={(e) => navigate(`/register`)} />,
+            },
+            {
+              name: "Attendance",
+              icon: <PeopleAltIcon onClick={(e) => navigate(`/attendance`)} />,
+            },
+            {
+              name: "Notifications",
+              icon: (
+                <NotificationsActiveIcon
+                  onClick={(e) => navigate(`/notification`)}
+                />
+              ),
+            },
+            {
+              name: "Leaves",
+              icon: <FactCheckIcon onClick={(e) => navigate(`/leaves`)} />,
+            },
           ].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
+            <ListItem key={text.name} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -154,21 +175,40 @@ export default function MiniDrawer({ childprops }) {
                     justifyContent: "center",
                   }}
                 >
-                  {index % 2 === 0 ? (
-                    <PersonAddIcon onClick={(e) => navigate("/Register")} />
-                  ) : (
-                    <EventAvailableIcon onClick={(e) => navigate("/Reset")} />
-                  )}
+                  {text.icon}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText
+                  primary={text.name}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
         <Divider />
         <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
+          {[
+            {
+              name: "Task Management",
+              icon: <TaskIcon onClick={(e) => navigate(`/task`)} />,
+            },
+            {
+              name: "Reports",
+              icon: <AnalyticsIcon onClick={(e) => navigate(`/reports`)} />,
+            },
+            {
+              name: "Logout",
+              icon: (
+                <LogoutIcon
+                  onClick={(e) => {
+                    localStorage.removeItem("user");
+                    navigate(`/`);
+                  }}
+                />
+              ),
+            },
+          ].map((text, index) => (
+            <ListItem key={text.name} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -176,16 +216,18 @@ export default function MiniDrawer({ childprops }) {
                   px: 2.5,
                 }}
               >
+                {text.icon}
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
                     mr: open ? 3 : "auto",
                     justifyContent: "center",
                   }}
-                >
-                  {index % 2 === 0 ? <PersonAddIcon /> : <EventAvailableIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                ></ListItemIcon>
+                <ListItemText
+                  primary={text.name}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
               </ListItemButton>
             </ListItem>
           ))}
