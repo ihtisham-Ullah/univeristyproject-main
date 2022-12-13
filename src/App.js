@@ -9,6 +9,7 @@ import ProtectedRoutes from "./components/protective/ProtectiveRoutes";
 import Attendance from "./components/Auth/attendance/Attendance";
 import Nopage from "./Nopage";
 import { allPrivateAppRoutes } from "./utitls/AllAppRoutes";
+import ViewSalesperson from "./components/Auth/viewSalesperson/ViewSalesperson";
 
 const App = () => {
   return (
@@ -17,10 +18,11 @@ const App = () => {
         {/* Original Routes */}
         <Route element={<ProtectedRoutes />}>
           <Route path="/Sidebar" element={<Sidebar />} />
-          <Route path="/notification" element={<Notification />} />
+          <Route path="/Notification" element={<Notification />} />
           <Route path="/Layout" element={Layout} />
           <Route path="/Register" element={<Register />} />
           <Route path="/Attendance" element={<Attendance />} />
+          <Route path="/Salesperson" element={<ViewSalesperson />} />
         </Route>
         <Route path="/" element={<LoginPage />} />
         <Route path="/Reset" element={<Reset />} />
@@ -30,7 +32,7 @@ const App = () => {
       <Routes>
         {allPrivateAppRoutes.map((items, index) => {
           return (
-            <Route element={<Layout element={items.component} />}>
+            <Route key={index} element={<Layout element={items.component} />}>
               <Route key={index} path={items.path} />
             </Route>
           );

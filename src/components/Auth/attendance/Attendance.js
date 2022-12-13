@@ -1,7 +1,10 @@
-import React from "react";
 
 function Attendance() {
-  return <h2>This is attendance page</h2>;
+ 
+
+  return (
+    <h3>This is Attendance Page</h3>
+  );
 }
 
 export default Attendance;

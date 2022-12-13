@@ -232,27 +232,7 @@ export default class Register extends Component {
           <div className="  main">
             <h3>Register Salesperson</h3>
             {this.state.isFormSubmitted ? (
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th> Email Address</th>
-                    <th>Phone</th>
-                    <th>Address</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td>{this.state.firstName}</td>
-                    <td>{this.state.lastName}</td>
-                    <td>{this.state.email}</td>
-                    <td>{this.state.phoneNo}</td>
-                    <td>{this.state.address}</td>
-                  </tr>
-                </tbody>
-              </table>
+              (window.location.href = "http://localhost:3000/Salesperson")
             ) : (
               <form onSubmit={this.handleSubmit}>
                 <div className="row">

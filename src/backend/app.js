@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
+const mongodb = require("mongodb");
 var nodemailer = require("nodemailer");
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
@@ -58,10 +59,19 @@ app.get("/getsalesperson", async (req, res) => {
   try {
     const data = await User.find();
     console.log(data);
-    res.send({ data });
+    res.send(data);
   } catch (error) {
     res.send({ status: "Error" });
   }
+});
+
+app.delete("/:id", async (req, res) => {
+  console.log(req.params.id);
+  const result = await User.deleteOne({
+    _id: new mongodb.ObjectId(req.params.id),
+  });
+
+  res.send(result);
 });
 
 require("./adminDetail");
@@ -115,7 +125,7 @@ app.post("/forgot-password", async (req, res) => {
         pass: "cjercyhchocelnws",
       },
     });
-    //faltoo tabs remove kro okk. mei call lrdo? sure us
+
     var mailOptions = {
       from: "workforce@gmail.com",
       to: "zalankhan180@gmail.com",

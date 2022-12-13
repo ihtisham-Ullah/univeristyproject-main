@@ -148,6 +148,12 @@ export default function MiniDrawer({ childprops }) {
               icon: <PeopleAltIcon onClick={(e) => navigate(`/attendance`)} />,
             },
             {
+              name: "View Salesperson",
+              icon: (
+                <PeopleAltIcon onClick={(e) => navigate(`/Salesperson`)} />
+              ),
+            },
+            {
               name: "Notifications",
               icon: (
                 <NotificationsActiveIcon
