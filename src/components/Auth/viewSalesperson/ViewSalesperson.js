@@ -1,20 +1,13 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+
+
 function ViewSalesperson() {
   const [list, setList] = useState([]);
+  let navigate = useNavigate();
 
   const getSalesperson = async () => {
-    // const { data } = await axios.get("http://localhost:5000/getsalesperson", {
-    //   crossDomain: true,
-    //   headers: {
-    //     "content-type": "application/json",
-    //     Accept: "application/json",
-    //     "Access-Control-Allow-origin": "*",
-    //   },
-    // });
-    // setList(data);
-
     fetch("http://localhost:5000/getsalesperson", {
       method: "GET",
       crossDomain: true,
@@ -51,7 +44,7 @@ function ViewSalesperson() {
         Registered Salesperson
       </p>
 
-      <table className="table" style={{ marginLeft: "6rem", width: "80rem" }}>
+      <table className="table" style={{ marginLeft: "16rem", width: "60rem" }}>
         <thead>
           <tr>
             <th>First Name</th>
@@ -77,6 +70,7 @@ function ViewSalesperson() {
                 >
                   Delete
                 </button>
+                <Link to={"/updateSalesperson/" + d._id} className="btn btn-primary btn-sm m-1">Update</Link>
               </td>
             </tr>
           ))}

@@ -67,10 +67,31 @@ app.get("/getsalesperson", async (req, res) => {
 
 app.delete("/:id", async (req, res) => {
   console.log(req.params.id);
-  const result = await User.deleteOne({
+  let result = await User.deleteOne({
     _id: new mongodb.ObjectId(req.params.id),
   });
 
+  res.send(result);
+});
+
+app.get("/getsalesperson/:id", async (req, res) => {
+  try {
+    let result = await User.findOne({ _id: req.params.id });
+    //result = await bcrypt.compare(password, user.password);
+    console.log(result);
+    if (result) {
+      res.send(result);
+    } else {
+      res.send({ result: "No Record Found" });
+    }
+  } catch (error) {
+    res.send({ status: "Error" });
+  }
+});
+
+app.put("/updateSalesperson/:id", async (req, res) => {
+  console.log(req.body);
+  let result = await User.updateOne({ _id: req.params.id }, { $set: req.body });
   res.send(result);
 });
 

@@ -10,6 +10,7 @@ import Attendance from "./components/Auth/attendance/Attendance";
 import Nopage from "./Nopage";
 import { allPrivateAppRoutes } from "./utitls/AllAppRoutes";
 import ViewSalesperson from "./components/Auth/viewSalesperson/ViewSalesperson";
+import UpdateSalesperson from "./components/updateSalesperson/UpdateSalesperson";
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           <Route path="/Register" element={<Register />} />
           <Route path="/Attendance" element={<Attendance />} />
           <Route path="/Salesperson" element={<ViewSalesperson />} />
+          <Route path="/UpdateSalesperson/:id" element={<UpdateSalesperson />} />
         </Route>
         <Route path="/" element={<LoginPage />} />
         <Route path="/Reset" element={<Reset />} />
