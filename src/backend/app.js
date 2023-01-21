@@ -9,6 +9,8 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
 const { validateUser } = require("./RegisterSalesperson");
 const { validateAdmin } = require("./adminDetail");
+const { validateTask } = require("./Task/CreateTask");
+
 app.use(cors());
 app.use(express.json());
 const jwt = require("jsonwebtoken");
@@ -27,8 +29,13 @@ mongoose
   .catch((e) => console.log(e));
 
 require("./RegisterSalesperson");
+require("./Task/TaskPriority");
+require("./Task/TaskType");
 
 const User = mongoose.model("Userinfo");
+const priority = mongoose.model("TaskPriority");
+const taskType = mongoose.model("TaskType");
+const createTask = mongoose.model("CreateTask");
 
 app.post("/register", async (req, res) => {
   const { error } = validateUser(req.body);
@@ -122,10 +129,6 @@ app.post("/login-user", async (req, res) => {
   res.json({ status: "error", error: "Invalid password " });
 });
 
-app.listen(5000, () => {
-  console.log("server started");
-});
-
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   try {
@@ -214,4 +217,71 @@ app.post("/reset-password/:id/:token", async (req, res) => {
     //console.log(error);
     //res.json({ status: "Something Went Wrong" });
   }
+});
+
+app.get("/gettaskpriority", async (req, res) => {
+  try {
+    const data = await priority.find();
+    console.log(data);
+    res.send(data);
+  } catch (error) {
+    res.send({ status: "Error" });
+  }
+});
+
+app.get("/gettasktype", async (req, res) => {
+  try {
+    const data = await taskType.find();
+    console.log(data);
+    res.send(data);
+  } catch (error) {
+    res.send({ status: "Error" });
+  }
+});
+
+app.post("/createTask", async (req, res) => {
+  const { error } = validateTask(req.body);
+
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const {
+    taskName,
+    taskDescription,
+    startDate,
+    endDate,
+    taskPriority,
+    taskType,
+    targetLocation,
+    salespersonId,
+  } = req.body;
+
+  try {
+    await createTask.create({
+      taskName,
+      taskDescription,
+      startDate,
+      endDate,
+      taskPriority,
+      taskType,
+      targetLocation,
+      salespersonId,
+    });
+    res.send({ status: "ok" });
+  } catch (error) {
+    res.send({ status: "Error" });
+  }
+});
+
+app.get("/getTasks", async (req, res) => {
+  try {
+    const data = await createTask.find();
+    console.log(data);
+    res.send(data);
+  } catch (error) {
+    res.send({ status: "Error" });
+  }
+});
+
+app.listen(5000, () => {
+  console.log("server started");
 });

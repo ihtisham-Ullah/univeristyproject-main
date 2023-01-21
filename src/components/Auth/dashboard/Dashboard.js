@@ -5,7 +5,7 @@ export const Dashboard = () => {
   return (
     <div>
       <Layout>
-        <h1>hii</h1>
+        <h1>Dashboard</h1>
       </Layout>
     </div>
   );

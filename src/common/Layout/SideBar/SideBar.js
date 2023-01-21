@@ -149,9 +149,7 @@ export default function MiniDrawer({ childprops }) {
             },
             {
               name: "View Salesperson",
-              icon: (
-                <PeopleAltIcon onClick={(e) => navigate(`/Salesperson`)} />
-              ),
+              icon: <PeopleAltIcon onClick={(e) => navigate(`/Salesperson`)} />,
             },
             {
               name: "Notifications",
@@ -195,12 +193,12 @@ export default function MiniDrawer({ childprops }) {
         <List>
           {[
             {
-              name: "Task Management",
-              icon: <TaskIcon onClick={(e) => navigate(`/task`)} />,
+              name: "Create Task",
+              icon: <TaskIcon onClick={(e) => navigate(`/CreateTask`)} />,
             },
             {
-              name: "Reports",
-              icon: <AnalyticsIcon onClick={(e) => navigate(`/reports`)} />,
+              name: "Assigned Tasks",
+              icon: <TaskIcon onClick={(e) => navigate(`/ViewTasks`)} />,
             },
             {
               name: "Logout",
