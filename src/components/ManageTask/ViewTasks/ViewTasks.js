@@ -1,8 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import Card from "react-bootstrap/Card";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
+import { Link } from "react-router-dom";
 
 function ViewTasks() {
   const [list, setList] = useState([]);
@@ -27,54 +25,111 @@ function ViewTasks() {
     getTasks();
   }, []);
 
-  const tasks = [{ taskName: list.taskName, startDate: list.startDate }];
+  function deleteTasks(id) {
+    fetch(`http://localhost:5000/tasks/${id}`, {
+      method: "DELETE",
+      crossDomain: true,
+    }).then((result) => {
+      result.json().then((resp) => {
+        getTasks();
+      });
+    });
+  }
 
   return (
     <>
+      <nav
+        className="nav nav-pills flex-column flex-sm-row"
+        style={{ marginTop: "5rem", marginLeft: "5rem" }}
+      >
+        <a
+          className="flex-sm-fill text-sm-center nav-link active"
+          aria-current="page"
+          href="!#"
+        >
+          Active
+        </a>
+        <a className="flex-sm-fill text-sm-center nav-link" href="!#">
+          Longer nav link
+        </a>
+        <a class="flex-sm-fill text-sm-center nav-link" href="!#">
+          Link
+        </a>
+        <a
+          className="flex-sm-fill text-sm-center nav-link disabled"
+          href="!#"
+          tabindex="-1"
+          aria-disabled="true"
+        >
+          Disabled
+        </a>
+      </nav>
       <p className="h3" style={{ marginTop: "7rem", marginLeft: "35rem" }}>
         Assigned Tasks
       </p>
       <div style={{ marginLeft: "5rem" }}>
-        {/* <Row xs={1} md={3} className="g-4">
-          {Array.from({ length: 9 }).map((_, idx) => (
-            <Col>
-              <Card>
-               
+        <div className="container">
+          <div className=" row mb-2">
+            {list?.map((d) => (
+              <div className="col-md-3">
+                <div class="card-deck">
+                  <div
+                    class="card mb-1 bg-primary text-white"
+                    style={{ width: "15rem" }}
+                  >
+                    <h5 class="card-header">{d.taskName}</h5>
+                    <div class="card-body">
+                      <p class="card-text">
+                        <h6 style={{ display: "inline", color: "black" }}>
+                          Description:
+                        </h6>{" "}
+                        {d.taskDescription}
+                      </p>
+                      <p>
+                        <h6 style={{ display: "inline", color: "black" }}>
+                          Type:
+                        </h6>{" "}
+                        {d.taskType}
+                      </p>
+                      <p>
+                        <h6 style={{ display: "inline", color: "black" }}>
+                          Priority:
+                        </h6>{" "}
+                        {d.taskPriority}
+                      </p>
+                      <p class="card-text">
+                        <h6 style={{ display: "inline", color: "black" }}>
+                          Location:
+                        </h6>{" "}
+                        {d.targetLocation}
+                      </p>
+                      <p class="card-text">
+                        <h6 style={{ display: "inline", color: "black" }}>
+                          End Date:
+                        </h6>{" "}
+                        {d.endDate}
+                      </p>
+                    </div>
+                    <Link
+                      to={"/updateTasks/" + d._id}
+                      className="btn btn-outline-warning"
+                    >
+                      Update
+                    </Link>
 
-                <Card.Body>
-                  {list?.map((d) => (
-                    <>
-                      <Card.Title>{d.taskName}</Card.Title>
-                      <Card.Text>{d.startDate}</Card.Text>
-                      <Card.Text>{d.endDate}</Card.Text>
-                      <Card.Text>{d.taskDescription}</Card.Text>
-                    </>
-                  ))}
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row> */}
-        {list?.map((d) => (
-          <div className="container">
-            <div className=" row-md-2 mb-2">
-              <div class="card-deck">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">{d.taskName}</h5>
-                    <p class="card-text">{d.taskDescription}</p>
-                    <p class="card-text">{d.targetLocation}</p>
-                  </div>
-                  <div class="card-footer">
-                    <small class="text-muted" >{d.startDate}</small>
-                    
-                    <small class="text-muted" style={{marginLeft:"5px" }}>{d.endDate}</small>
+                    <button
+                      onClick={() => deleteTasks(d._id)}
+                      type="button"
+                      class="btn btn-outline-danger"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </>
   );

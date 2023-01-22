@@ -25,7 +25,7 @@ function validateTask(task) {
     taskPriority: Joi.string().min(2).max(50).required(),
     taskType: Joi.string().min(5).max(50).required(),
     targetLocation: Joi.string().min(5).max(200).required(),
-    salespersonId: Joi.string().min(5).max(200).required(),
+    salespersonId: Joi.string().min(0).max(200).required(),
   });
 
   return schema.validate(task);

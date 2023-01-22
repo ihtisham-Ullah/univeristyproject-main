@@ -20,27 +20,6 @@ const UpdateSalesperson = () => {
   }, []);
 
   const getSalesperson = async () => {
-    //console.warn(params);
-    // fetch(`http://localhost:5000/getsalesperson/${params.id}`, {
-    //   method: "GET",
-    //   crossDomain: true,
-    //   headers: {
-    //     "content-type": "application/json",
-    //     Accept: "application/json",
-    //     "Access-Control-Allow-origin": "*",
-    //   },
-    // }).then((result) => {
-    //   result.json().then((resp) => {
-    //     setFirstName(resp.firstName);
-    //     setLastName(resp.lastName);
-    //     setEmail(resp.email);
-    //     setPhoneNo(resp.phoneNo);
-    //     setAddress(resp.address);
-    //   });
-    // });
-    // // result = await result.json();
-    // // console.log(result);
-
     const { data: res } = await axios.get(apiEndPoint);
 
     setFirstName(res.firstName);
@@ -52,8 +31,6 @@ const UpdateSalesperson = () => {
   const updateSalesperson = async (e) => {
     e.preventDefault();
     console.warn(firstName, lastName, email, phoneNo, address);
-
-
     fetch(`http://localhost:5000/updateSalesperson/${params.id}`, {
       method: "PUT",
       crossDomain: true,

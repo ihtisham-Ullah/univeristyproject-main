@@ -1,4 +1,6 @@
 const express = require("express");
+
+
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -31,6 +33,7 @@ mongoose
 require("./RegisterSalesperson");
 require("./Task/TaskPriority");
 require("./Task/TaskType");
+require("./Task/CreateTask");
 
 const User = mongoose.model("Userinfo");
 const priority = mongoose.model("TaskPriority");
@@ -84,7 +87,7 @@ app.delete("/:id", async (req, res) => {
 app.get("/getsalesperson/:id", async (req, res) => {
   try {
     let result = await User.findOne({ _id: req.params.id });
-    //result = await bcrypt.compare(password, user.password);
+
     console.log(result);
     if (result) {
       res.send(result);
@@ -280,6 +283,36 @@ app.get("/getTasks", async (req, res) => {
   } catch (error) {
     res.send({ status: "Error" });
   }
+});
+
+app.get("/getTasks/:id", async (req, res) => {
+  try {
+    let result = await createTask.findOne({ _id: req.params.id });
+
+    console.log(result);
+    if (result) {
+      res.send(result);
+    } else {
+      res.send({ result: "No Record Found" });
+    }
+  } catch (error) {
+    res.send({ status: "Error" });
+  }
+});
+
+app.delete("/tasks/:id", async (req, res) => {
+  console.log(req.params.id);
+  let result = await createTask.deleteOne({
+    _id: new mongodb.ObjectId(req.params.id),
+  });
+
+  res.send(result);
+});
+
+app.put("/updateTasks/:id", async (req, res) => {
+  console.log(req.body);
+  let result = await createTask.updateOne({ _id: req.params.id }, { $set: req.body });
+  res.send(result);
 });
 
 app.listen(5000, () => {

@@ -13,6 +13,7 @@ import ViewSalesperson from "./components/Auth/viewSalesperson/ViewSalesperson";
 import UpdateSalesperson from "./components/updateSalesperson/UpdateSalesperson";
 import CreateTask from "./components/ManageTask/CreateTask/CreateTask";
 import ViewTasks from "./components/ManageTask/ViewTasks/ViewTasks";
+import UpdateTasks from "./components/ManageTask/UpdateTasks/UpdateTasks";
 
 const App = () => {
   return (
@@ -26,9 +27,13 @@ const App = () => {
           <Route path="/Register" element={<Register />} />
           <Route path="/Attendance" element={<Attendance />} />
           <Route path="/Salesperson" element={<ViewSalesperson />} />
-          <Route path="/UpdateSalesperson/:id" element={<UpdateSalesperson />} />
+          <Route
+            path="/UpdateSalesperson/:id"
+            element={<UpdateSalesperson />}
+          />
           <Route path="/CreateTask" element={<CreateTask />} />
           <Route path="/ViewTasks" element={<ViewTasks />} />
+          <Route path="/UpdateTasks/:id" element={<UpdateTasks />} />
         </Route>
         <Route path="/" element={<LoginPage />} />
         <Route path="/Reset" element={<Reset />} />
