@@ -1,0 +1,39 @@
+.input-error-style {
+  margin-top: 3px;
+
+  color: #ff6565;
+  font-size: 0.7rem;
+
+}
+.youtube-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 24px;
+
+  & ~ .form-floating {
+    input,
+    label {
+      padding-left: 72px !important;
+    }
+  }
+  & ~ svg {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 12px;
+    height: 20px;
+    width: 20px;
+    rect {
+      fill: transparent;
+    }
+    path {
+      fill: #013f58;
+    }
+  }
+
+  svg {
+    height: 32px;
+    width: 32px;
+  }
+}

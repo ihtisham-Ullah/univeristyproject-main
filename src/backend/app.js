@@ -1,6 +1,5 @@
 const express = require("express");
 
-
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -244,7 +243,7 @@ app.get("/gettasktype", async (req, res) => {
 
 app.post("/createTask", async (req, res) => {
   const { error } = validateTask(req.body);
-
+  console.log("error backend", error);
   if (error) return res.status(400).send(error.details[0].message);
 
   const {
@@ -310,8 +309,11 @@ app.delete("/tasks/:id", async (req, res) => {
 });
 
 app.put("/updateTasks/:id", async (req, res) => {
-  console.log(req.body);
-  let result = await createTask.updateOne({ _id: req.params.id }, { $set: req.body });
+  console.log(req.body, "from update");
+  let result = await createTask.updateOne(
+    { _id: req.params.id },
+    { $set: req.body }
+  );
   res.send(result);
 });
 
