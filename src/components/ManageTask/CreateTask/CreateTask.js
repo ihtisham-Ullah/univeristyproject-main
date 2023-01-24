@@ -5,17 +5,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Formik, Field } from "formik";
-<<<<<<< HEAD
-
-// import { CustomInputComponent } from "common/FormikElements/FormikTextArea/TextArea";
-import {CustomInputComponent} from "../../../common/FormikElements/FormikTextArea/TextArea";
-=======
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-places-autocomplete";
 import { CustomInputComponent } from "common/FormikElements/FormikTextArea/TextArea";
->>>>>>> e7b1fd3daeb285d2c22e49f202681e7236ceb6bc
 import {
   TextField,
   Button,
