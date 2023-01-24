@@ -5,7 +5,10 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Formik, Field } from "formik";
-
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from "react-places-autocomplete";
 import { CustomInputComponent } from "common/FormikElements/FormikTextArea/TextArea";
 import {
   TextField,
@@ -28,6 +31,7 @@ function CreateTask() {
   const [salesperson, setSalesPerson] = useState("");
   const [Loader, setLoadder] = useState(false);
   const [submitformLoader, setSubmitformLoader] = useState(false);
+  const [state, setState] = useState({ address: "" });
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -36,7 +40,6 @@ function CreateTask() {
 
   const updateTasks = async () => {
     let { data } = await axios.get(`http://localhost:5000/getTasks/${id}`);
-    console.log("data", data);
     setSingleDataFetch(data);
   };
 
@@ -88,7 +91,6 @@ function CreateTask() {
           } else {
             navigate("/ViewTasks");
             Swal.fire("Task Created Successfully!", "", "success");
-            console.log("your task");
           }
         });
     } catch (error) {
@@ -135,6 +137,18 @@ function CreateTask() {
         )}
       </>
     );
+  };
+
+  const handleLocationSelect = (address) => {
+    setState({ address });
+
+    geocodeByAddress(address)
+      .then((results) => getLatLng(results[0]))
+      .then((latLng) => console.log("Success", latLng))
+      .catch((error) => console.error("Error", error));
+  };
+  const handleChangeLocation = (address) => {
+    setState({ address });
   };
 
   return (
@@ -194,210 +208,264 @@ function CreateTask() {
             })}
             enableReinitialize
           >
-            {({ handleSubmit, values, errors, touched, handleChange }) => (
+            {({
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              handleChange,
+              setFieldValue,
+            }) => (
               <form onSubmit={handleSubmit}>
                 <div className="row ">
-                  {[
-                    "task_Name",
-                    "start_Date",
-                    "end_Date",
-                    "task_Priority",
-                    "task_Type",
-                    "sales_personId",
-                    "target_Location",
-                    "task_Description",
-                  ].map((items, index) => {
-                    return (
-                      <>
-                        {items === "task_Description" ? (
-                          <div className="col-sm-6 col-md-4 form-group mb-3">
-                            <Field
-                              name="taskDescription"
-                              component={CustomInputComponent}
-                              value={values["taskDescription"]}
-                              placeholder="Description"
-                              className="form-control "
-                              rows="2"
-                              onChange={handleChange}
-                              style={{
-                                height: "55px",
-                                border:
-                                  touched["taskDescription"] &&
-                                  Boolean(errors["taskDescription"])
-                                    ? "1px solid red"
-                                    : "",
-                              }}
-                            />
+                  <div className="col-sm-6 col-md-4 form-group mb-3">
+                    <TextField
+                      fullWidth
+                      id="taskName"
+                      name="taskName"
+                      label="Task Name"
+                      value={values.taskName}
+                      onChange={handleChange}
+                      error={touched["taskName"] && Boolean(errors["taskName"])}
+                      helperText={touched["taskName"] && errors["taskName"]}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  </div>
+                  <div className="col-sm-6 col-md-4 form-group mb-3">
+                    <FormControl
+                      fullWidth
+                      error={touched["taskType"] && Boolean(errors["taskType"])}
+                    >
+                      <InputLabel id="demo-simple-select-label">
+                        Task Type
+                      </InputLabel>
 
-                            {requiredErrorShow("endDate", touched, errors)}
-                          </div>
-                        ) : items === "task_Priority" ? (
-                          <div className="col-sm-6 col-md-4 form-group mb-3">
-                            <FormControl
-                              fullWidth
-                              error={
-                                touched["taskPriority"] &&
-                                Boolean(errors["taskPriority"])
-                              }
-                            >
-                              <InputLabel id="demo-simple-select-label">
-                                {items?.replace(/_/g, " ")}
-                              </InputLabel>
-                              <Select
-                                labelId="demo-simple-select-error-label"
-                                id="demo-simple-select-error"
-                                name="taskPriority"
-                                value={values.taskPriority || ""}
-                                label={items?.replace(/_/g, " ")}
-                                onChange={handleChange}
-                              >
-                                {Object.values(taskPriority).map((task) => (
-                                  <MenuItem
-                                    key={task.priority}
-                                    value={task.priority}
-                                  >
-                                    {task.priority}
-                                  </MenuItem>
-                                ))}
-                              </Select>
+                      <Select
+                        labelId="demo-simple-select-error-label"
+                        id="demo-simple-select-error"
+                        name="taskType"
+                        value={values.taskType || ""}
+                        label="Task Type"
+                        onChange={handleChange}
+                      >
+                        {Object.values(taskType).map((task, index) => (
+                          <MenuItem value={task.type} key={index}>
+                            {task.type}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {touched["taskType"] && Boolean(errors["taskType"]) && (
+                        <FormHelperText>*Required</FormHelperText>
+                      )}
+                    </FormControl>
+                  </div>
+                  <div className="col-sm-6 col-md-4 form-group mb-3">
+                    <FormControl
+                      fullWidth
+                      error={
+                        touched["taskPriority"] &&
+                        Boolean(errors["taskPriority"])
+                      }
+                    >
+                      <InputLabel id="demo-simple-select-label">
+                        Task Priority
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-error-label"
+                        id="demo-simple-select-error"
+                        name="taskPriority"
+                        value={values.taskPriority || ""}
+                        label="Task Priority"
+                        onChange={handleChange}
+                      >
+                        {Object.values(taskPriority).map((task) => (
+                          <MenuItem key={task.priority} value={task.priority}>
+                            {task.priority}
+                          </MenuItem>
+                        ))}
+                      </Select>
 
-                              {requiredErrorShow("endDate", touched, errors)}
-                            </FormControl>
-                          </div>
-                        ) : items === "task_Type" ? (
-                          <div className="col-sm-6 col-md-4 form-group mb-3">
-                            <FormControl
-                              fullWidth
-                              error={
-                                touched["taskType"] &&
-                                Boolean(errors["taskType"])
-                              }
-                            >
-                              <InputLabel id="demo-simple-select-label">
-                                {items?.replace(/_/g, " ")}
-                              </InputLabel>
+                      {requiredErrorShow("endDate", touched, errors)}
+                    </FormControl>
+                  </div>
 
-                              <Select
-                                labelId="demo-simple-select-error-label"
-                                id="demo-simple-select-error"
-                                name="taskType"
-                                value={values.taskType || ""}
-                                label={items?.replace(/_/g, " ")}
-                                onChange={handleChange}
-                              >
-                                {Object.values(taskType).map((task, index) => (
-                                  <MenuItem value={task.type} key={index}>
-                                    {task.type}
-                                  </MenuItem>
-                                ))}
-                              </Select>
-                              {touched["taskType"] &&
-                                Boolean(errors["taskType"]) && (
-                                  <FormHelperText>*Required</FormHelperText>
-                                )}
-                            </FormControl>
-                          </div>
-                        ) : items === "sales_personId" ? (
-                          <div className="col-sm-6 col-md-4 form-group mb-3">
-                            <FormControl
-                              fullWidth
-                              error={
-                                touched["salespersonId"] &&
-                                Boolean(errors["salespersonId"])
-                              }
-                            >
-                              <InputLabel id="demo-simple-select-label">
-                                sales person
-                              </InputLabel>
+                  <div className="col-sm-6 col-md-4 form-group mb-3">
+                    <FormControl
+                      fullWidth
+                      error={
+                        touched["salespersonId"] &&
+                        Boolean(errors["salespersonId"])
+                      }
+                    >
+                      <InputLabel id="demo-simple-select-label">
+                        Sales Person
+                      </InputLabel>
 
-                              <Select
-                                labelId="demo-simple-select-error-label"
-                                id="demo-simple-select-error"
-                                name="salespersonId"
-                                value={values.salespersonId || ""}
-                                defaultValue={
-                                  Object.values(salesperson).filter((items) => {
-                                    return items._id === values.salespersonId;
-                                  })[0]?.firstName || ""
-                                }
-                                label="sales person"
-                                onChange={handleChange}
-                              >
-                                {Object.values(salesperson).map((task) => (
-                                  <MenuItem key={task._id} value={task._id}>
-                                    {task.firstName}
-                                  </MenuItem>
-                                ))}
-                              </Select>
+                      <Select
+                        labelId="demo-simple-select-error-label"
+                        id="demo-simple-select-error"
+                        name="salespersonId"
+                        value={values.salespersonId || ""}
+                        defaultValue={
+                          Object.values(salesperson).filter((items) => {
+                            return items._id === values.salespersonId;
+                          })[0]?.firstName || ""
+                        }
+                        label="Sales Person"
+                        onChange={handleChange}
+                      >
+                        {Object.values(salesperson).map((task) => (
+                          <MenuItem key={task._id} value={task._id}>
+                            {task.firstName}
+                          </MenuItem>
+                        ))}
+                      </Select>
 
-                              {requiredErrorShow("endDate", touched, errors)}
-                            </FormControl>
+                      {requiredErrorShow("endDate", touched, errors)}
+                    </FormControl>
+                  </div>
+                  <div className="col-sm-6 col-md-4 form-group mb-3">
+                    <TextField
+                      fullWidth
+                      id="startDate"
+                      label="Start Date"
+                      type="date"
+                      name={"startDate"}
+                      value={values.startDate}
+                      onChange={handleChange}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      error={
+                        touched["startDate"] && Boolean(errors["startDate"])
+                      }
+                    />
+                    {requiredErrorShow("startDate", touched, errors)}
+                  </div>
+                  <div className="col-sm-6 col-md-4 form-group mb-3">
+                    <TextField
+                      fullWidth
+                      id="dateEnd"
+                      label="End Date"
+                      type="date"
+                      name="endDate"
+                      value={values.endDate}
+                      onChange={handleChange}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      error={touched["endDate"] && Boolean(errors["endDate"])}
+                    />
+                    {requiredErrorShow("endDate", touched, errors)}
+                  </div>
+
+                  <div className="col-sm-6 col-md-4 form-group mb-3">
+                    <PlacesAutocomplete
+                      // value={state.address}
+                      value={values.targetLocation || ""}
+                      onChange={(evt) => {
+                        handleChangeLocation(evt);
+                        if (!evt) {
+                          setFieldValue("targetLocation", "");
+                        } else {
+                          setFieldValue("targetLocation", evt);
+                        }
+                        console.log("evt", evt);
+                      }}
+                      onSelect={(evnt) => {
+                        handleLocationSelect(evnt);
+                        console.log(">>>>>", evnt);
+                        setFieldValue("targetLocation", evnt);
+                      }}
+                    >
+                      {({
+                        getInputProps,
+                        suggestions,
+                        getSuggestionItemProps,
+                        loading,
+                      }) => (
+                        <div>
+                          <TextField
+                            fullWidth
+                            id="targetLocation"
+                            name="targetLocation"
+                            label="Target Location"
+                            value={values.targetLocation || ""}
+                            onChange={(evnt) => {
+                              console.log(":da", evnt.target.value);
+                              setFieldValue("targetLocation", state.address);
+                            }}
+                            error={
+                              touched["targetLocation"] &&
+                              Boolean(errors["targetLocation"])
+                            }
+                            helperText={
+                              touched["targetLocation"] &&
+                              errors["targetLocation"]
+                            }
+                            InputLabelProps={{
+                              shrink: true,
+                            }}
+                            {...getInputProps({
+                              placeholder: "Search Places ...",
+                              className: "location-search-input",
+                            })}
+                          />
+                          <div className="autocomplete-dropdown-container">
+                            {loading && <div>Loading...</div>}
+                            {suggestions.map((suggestion) => {
+                              const className = suggestion.active
+                                ? "suggestion-item--active"
+                                : "suggestion-item";
+                              // inline style for demonstration purpose
+                              const style = suggestion.active
+                                ? {
+                                    backgroundColor: "#fafafa",
+                                    cursor: "pointer",
+                                  }
+                                : {
+                                    backgroundColor: "#ffffff",
+                                    cursor: "pointer",
+                                  };
+                              return (
+                                <div
+                                  {...getSuggestionItemProps(suggestion, {
+                                    className,
+                                    style,
+                                  })}
+                                >
+                                  <span>{suggestion.description}</span>
+                                </div>
+                              );
+                            })}
                           </div>
-                        ) : items === "start_Date" ? (
-                          <div className="col-sm-6 col-md-4 form-group mb-3">
-                            <TextField
-                              fullWidth
-                              id="dateStart"
-                              label={items?.replace(/_/g, " ")}
-                              type="date"
-                              name={items?.replace(/_/g, "")}
-                              value={values[items?.replace(/_/g, "")]}
-                              onChange={handleChange}
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                              error={
-                                touched["startDate"] &&
-                                Boolean(errors["startDate"])
-                              }
-                            />
-                            {requiredErrorShow("endDate", touched, errors)}
-                          </div>
-                        ) : items === "end_Date" ? (
-                          <div className="col-sm-6 col-md-4 form-group mb-3">
-                            <TextField
-                              fullWidth
-                              id="dateEnd"
-                              label={items?.replace(/_/g, " ")}
-                              type="date"
-                              name={items?.replace(/_/g, "")}
-                              value={values[items?.replace(/_/g, "")]}
-                              onChange={handleChange}
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                              error={
-                                touched["endDate"] && Boolean(errors["endDate"])
-                              }
-                            />
-                            {requiredErrorShow("endDate", touched, errors)}
-                          </div>
-                        ) : (
-                          <div className="col-sm-6 col-md-4 form-group mb-3">
-                            <TextField
-                              fullWidth
-                              id={items}
-                              name={items?.replace(/_/g, "")}
-                              label={items?.replace(/_/g, " ")}
-                              value={values[items?.replace(/_/g, "")]}
-                              onChange={handleChange}
-                              error={
-                                touched[items?.replace(/_/g, "")] &&
-                                Boolean(errors[items?.replace(/_/g, "")])
-                              }
-                              helperText={
-                                touched[items?.replace(/_/g, "")] &&
-                                errors[items?.replace(/_/g, "")]
-                              }
-                              InputLabelProps={{
-                                shrink: true,
-                              }}
-                            />
-                          </div>
-                        )}
-                      </>
-                    );
-                  })}
+                        </div>
+                      )}
+                    </PlacesAutocomplete>
+                  </div>
+                  <div className="col-sm-6 col-md-4 form-group mb-3">
+                    <Field
+                      name="taskDescription"
+                      component={CustomInputComponent}
+                      value={values["taskDescription"]}
+                      placeholder="Description"
+                      className="form-control "
+                      rows="2"
+                      onChange={handleChange}
+                      style={{
+                        height: "55px",
+                        border:
+                          touched["taskDescription"] &&
+                          Boolean(errors["taskDescription"])
+                            ? "1px solid red"
+                            : "",
+                      }}
+                    />
+
+                    {requiredErrorShow("taskDescription", touched, errors)}
+                  </div>
                 </div>
 
                 <div className="mt-3 d-flex justify-content-center">
