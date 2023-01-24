@@ -1,8 +1,4 @@
 const express = require("express");
-<<<<<<< HEAD
-=======
-
->>>>>>> cc4a34749f79924846744d5063c2bffda23ba710
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");

@@ -6,7 +6,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Formik, Field } from "formik";
 
-import { CustomInputComponent } from "common/FormikElements/FormikTextArea/TextArea";
+// import { CustomInputComponent } from "common/FormikElements/FormikTextArea/TextArea";
+import {CustomInputComponent} from "../../../common/FormikElements/FormikTextArea/TextArea";
 import {
   TextField,
   Button,
@@ -21,23 +22,6 @@ import {
 import Swal from "sweetalert2";
 import * as Yup from "yup";
 function CreateTask() {
-<<<<<<< HEAD
-  const [dateStart, setDateStart] = useState("");
-  const [taskName, setTaskName] = useState("");
-  const [description, setDescription] = useState("");
-  const [dateEnd, setDateEnd] = useState("");
-  const [taskType, setTaskType] = useState("--Select type--");
-  const [taskTypeField, setTaskTypeField] = useState("--Select type--");
-  const [taskPriority, setTaskPriority] = useState("--Select priority--");
-  const [taskPriorityField, setTaskPriorityField] = useState(
-    "--Select priority--"
-  );
-  const [salesperson, setSalesPerson] = useState("--Select Salesperson--");
-  const [salespersonField, setSalesPersonField] = useState(
-    "--Select Salesperson--"
-  );
-  const [targetLocation, setTargetLocation] = useState("");
-=======
   const [taskType, setTaskType] = useState("");
   const [taskPriority, setTaskPriority] = useState("--Select priority--");
   const [singleDateFetch, setSingleDataFetch] = useState({});
@@ -45,7 +29,6 @@ function CreateTask() {
   const [salesperson, setSalesPerson] = useState("");
   const [Loader, setLoadder] = useState(false);
   const [submitformLoader, setSubmitformLoader] = useState(false);
->>>>>>> cc4a34749f79924846744d5063c2bffda23ba710
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -59,15 +42,6 @@ function CreateTask() {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
-    const getTaskpriority = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/gettaskpriority");
-        const data = await res.json();
-        setTaskPriority(await data);
-      } catch (err) {
-        console.error(err);
-=======
     fetchDropDownLists();
   }, []);
 
@@ -95,7 +69,6 @@ function CreateTask() {
       if (id) {
         handleUpdateTask(data);
         return;
->>>>>>> cc4a34749f79924846744d5063c2bffda23ba710
       }
       await fetch("http://localhost:5000/createTask", {
         method: "POST",
@@ -137,28 +110,6 @@ function CreateTask() {
         Accept: "application/json",
         "Access-Control-Allow-origin": "*",
       },
-<<<<<<< HEAD
-      body: JSON.stringify({
-        taskName: taskName,
-        targetLocation: targetLocation,
-        taskDescription: description,
-        startDate: dateStart,
-        endDate: dateEnd,
-        taskPriority: taskPriorityField,
-        taskType: taskTypeField,
-        salespersonId: salespersonField,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.status !== "ok") {
-          Swal.fire("Task Cannot be Created !", "", "error");
-        } else {
-          navigate("/ViewTasks");
-          Swal.fire("Task Created Successfully!", "", "success");
-        }
-      });
-=======
     });
     result = await result.json();
 
@@ -185,7 +136,6 @@ function CreateTask() {
         )}
       </>
     );
->>>>>>> cc4a34749f79924846744d5063c2bffda23ba710
   };
 
   return (
@@ -312,65 +262,6 @@ function CreateTask() {
                                 ))}
                               </Select>
 
-<<<<<<< HEAD
-              <div className="col-md-6 mb-3">
-                <label htmlFor="priority">Priority</label>
-                <select
-                  className="form-select"
-                  value={taskPriorityField}
-                  onChange={(e) => setTaskPriorityField(e.target.value)}
-                >
-                  {Object.values(taskPriority).map((task) => (
-                    <option key={task._id} value={task.priority}>
-                      {task.priority}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className=" col-md-6 mb-3">
-                <label htmlFor="taskType">Task Type</label>
-                <select
-                  className="form-select"
-                  value={taskTypeField}
-                  multiple={false}
-                  onChange={(e) => setTaskTypeField(e.target.value)}
-                >
-                  <option value="">--Select Task--</option>
-                  {Object.values(taskType).map((task) => (
-                    <option key={task._id}>{task.type}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="col-md-6 mb-3">
-                <label>Target Location</label>
-                <input
-                  type="location"
-                  name="location"
-                  className="form-control"
-                  autoComplete="off"
-                  value={targetLocation}
-                  onChange={(e) => setTargetLocation(e.target.value)}
-                  required
-                />
-              </div>
-              <div className=" col-md-6 mb-3">
-                <label htmlFor="selectSalesperson">Select Salesperson</label>
-                <select
-                  className="form-select"
-                  value={salespersonField}
-                  multiple={false}
-                  onChange={(e) => setSalesPersonField(e.target.value)}
-                >
-                  <option value="">--Select Salesperson--</option>
-                  {Object.values(salesperson).map((salesperson) => (
-                    <option value={salesperson._id} key={salesperson._id}>
-                      {salesperson.firstName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-=======
                               {requiredErrorShow("endDate", touched, errors)}
                             </FormControl>
                           </div>
@@ -419,7 +310,6 @@ function CreateTask() {
                               <InputLabel id="demo-simple-select-label">
                                 sales person
                               </InputLabel>
->>>>>>> cc4a34749f79924846744d5063c2bffda23ba710
 
                               <Select
                                 labelId="demo-simple-select-error-label"

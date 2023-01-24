@@ -14,11 +14,7 @@ import UpdateSalesperson from "./components/updateSalesperson/UpdateSalesperson"
 import CreateTask from "./components/ManageTask/CreateTask/CreateTask";
 import ViewTasks from "./components/ManageTask/ViewTasks/ViewTasks";
 import UpdateTasks from "./components/ManageTask/UpdateTasks/UpdateTasks";
-<<<<<<< HEAD
-import { Dashboard } from "./components/Auth/dashboard/Dashboard";
-=======
 import UpdateedTask2 from "./components/ManageTask/CreateTask/CreateTask";
->>>>>>> cc4a34749f79924846744d5063c2bffda23ba710
 
 const App = () => {
   return (
@@ -38,12 +34,7 @@ const App = () => {
           />
           <Route path="/CreateTask" element={<CreateTask />} />
           <Route path="/ViewTasks" element={<ViewTasks />} />
-<<<<<<< HEAD
-          <Route path="/UpdateTasks/:id" element={<UpdateTasks />} />
-          <Route path="/Dashboard" element={<Dashboard />} />
-=======
           <Route path="/UpdateTasks/:id" element={<UpdateedTask2 />} />
->>>>>>> cc4a34749f79924846744d5063c2bffda23ba710
         </Route>
         <Route path="/" element={<LoginPage />} />
         <Route path="/Reset" element={<Reset />} />
