@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./UpdateTask.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState, useEffect } from "react";
+
 import { TextField } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { useParams } from "react-router-dom";
 
 function UpdateTasks() {
   const [startDate, setDateStart] = useState("");
@@ -15,6 +14,9 @@ function UpdateTasks() {
   const [endDate, setDateEnd] = useState("");
   const [taskType, setTaskType] = useState("");
   const [taskPriority, setTaskPriority] = useState("--Select priority--");
+  const [taskPriotiyField, setTaskPriotiyField] = useState(
+    "--Select priority--"
+  );
   const [salespersonId, setSalesPerson] = useState("");
   const [targetLocation, setTargetLocation] = useState("");
   const params = useParams();
@@ -65,7 +67,7 @@ function UpdateTasks() {
     setSalesPerson(data.salespersonId);
     setDateStart(data.startDate);
     setDateEnd(data.endDate);
-    setTaskPriority(data.taskPriority);
+    setTaskPriotiyField(data.taskPriority);
     setTaskType(data.taskType);
   };
 
@@ -125,8 +127,8 @@ function UpdateTasks() {
                 <label htmlFor="priority">Priority</label>
                 <select
                   className="form-select"
-                  value={taskPriority}
-                  onChange={(e) => setTaskPriority(e.target.value)}
+                  value={taskPriotiyField}
+                  onChange={(e) => setTaskPriotiyField(e.target.value)}
                 >
                   {Object.values(taskPriority).map((task) => (
                     <option key={task._id} value={task.priority}>

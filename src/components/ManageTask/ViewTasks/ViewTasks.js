@@ -1,43 +1,60 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 
+import { Link } from "react-router-dom";
+import { CircularProgress, Backdrop } from "@mui/material";
 function ViewTasks() {
   const [list, setList] = useState([]);
+  const [Loader, setLoadder] = useState(false);
 
   const getTasks = async () => {
-    fetch("http://localhost:5000/getTasks", {
-      method: "GET",
-      crossDomain: true,
+    try {
+      setLoadder(true);
+      await fetch("http://localhost:5000/getTasks", {
+        method: "GET",
+        crossDomain: true,
 
-      headers: {
-        "content-type": "application/json",
-        Accept: "application/json",
-        "Access-Control-Allow-origin": "*",
-      },
-    }).then((result) => {
-      result.json().then((resp) => {
-        setList(resp);
+        headers: {
+          "content-type": "application/json",
+          Accept: "application/json",
+          "Access-Control-Allow-origin": "*",
+        },
+      }).then((result) => {
+        result.json().then((resp) => {
+          setList(resp);
+          setLoadder(false);
+        });
       });
-    });
+      setLoadder(false);
+    } catch (error) {
+      console.log("error", error);
+      setLoadder(false);
+    }
   };
   useEffect(() => {
     getTasks();
   }, []);
 
   function deleteTasks(id) {
-    fetch(`http://localhost:5000/tasks/${id}`, {
-      method: "DELETE",
-      crossDomain: true,
-    }).then((result) => {
-      result.json().then((resp) => {
-        getTasks();
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      fetch(`http://localhost:5000/tasks/${id}`, {
+        method: "DELETE",
+        crossDomain: true,
+      }).then((result) => {
+        result.json().then((resp) => {
+          getTasks();
+        });
       });
-    });
+    }
   }
 
   return (
     <>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={Loader}
+      >
+        <CircularProgress />
+      </Backdrop>
       <nav
         className="nav nav-pills flex-column flex-sm-row"
         style={{ marginTop: "5rem", marginLeft: "5rem" }}

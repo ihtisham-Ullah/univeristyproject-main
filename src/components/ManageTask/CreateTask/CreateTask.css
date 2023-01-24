@@ -4,6 +4,7 @@
   box-sizing: border-box;
   /* i will sugest you global style use in index.css beacuse react render same css in all component or you use style comonent  */
 }
+
 body {
   min-height: 100vh;
   display: flex;
@@ -28,9 +29,8 @@ span {
   height: 100%;
   margin-top: 25px;
 }
-s
 
-.auth-wrapper {
+s .auth-wrapper {
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -54,4 +54,8 @@ s
   font-weight: 400;
 }
 
-
+.input-error-style {
+  margin: 3px 14px 0px;
+  color: #d32f2f;
+  font-size: 12px;
+}
