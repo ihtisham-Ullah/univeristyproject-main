@@ -86,7 +86,7 @@ function CreateTask() {
           if (data.status !== "ok") {
             Swal.fire("Task Cannot be Created !", "", "error");
           } else {
-            // navigate("/ViewTasks");
+            navigate("/ViewTasks");
             Swal.fire("Task Created Successfully!", "", "success");
             console.log("your task");
           }
