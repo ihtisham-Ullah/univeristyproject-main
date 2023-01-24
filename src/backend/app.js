@@ -1,6 +1,4 @@
 const express = require("express");
-
-
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -149,7 +147,7 @@ app.post("/forgot-password", async (req, res) => {
       service: "gmail",
       auth: {
         user: "ihtishamshami180@gmail.com",
-        pass: "cjercyhchocelnws",
+        pass: "upcaqvopjftslhfj",
       },
     });
 
@@ -314,6 +312,65 @@ app.put("/updateTasks/:id", async (req, res) => {
   let result = await createTask.updateOne({ _id: req.params.id }, { $set: req.body });
   res.send(result);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.post('/users',(req,res)=>{
+ 
+  var transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: "ihtishamshami180@gmail.com",
+        pass: "upcaqvopjftslhfj",
+      }
+  });
+
+  var mailOptions = {
+      from: 'ihtishamshami180@gmail.com',// sender address
+      to: req.body.to, // list of receivers
+      subject: req.body.subject, // Subject line
+      text:req.body.description,
+      html: `
+      <div style="padding:10px;border-style: ridge">
+      <p>You have a new contact request.</p>
+      <h3>Contact Details</h3>
+      <ul>
+          <li>Email: ${req.body.to}</li>
+          <li>Subject: ${req.body.subject}</li>
+          <li>Message: ${req.body.description}</li>
+      </ul>
+      `
+  };
+   
+  transporter.sendMail(mailOptions, function(error, info){
+      if (error)
+      {
+        res.json({status: true, respMesg: 'Email Sent Successfully'})
+      } 
+      else
+      {
+        res.json({status: true, respMesg: 'Email Sent Successfully'})
+      }
+   
+    });
+});
+
+
+
+
+
+
 
 app.listen(5000, () => {
   console.log("server started");

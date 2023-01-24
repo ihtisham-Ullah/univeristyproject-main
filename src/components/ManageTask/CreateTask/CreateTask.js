@@ -12,9 +12,16 @@ function CreateTask() {
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
   const [dateEnd, setDateEnd] = useState("");
-  const [taskType, setTaskType] = useState("");
+  const [taskType, setTaskType] = useState("--Select type--");
+  const [taskTypeField, setTaskTypeField] = useState("--Select type--");
   const [taskPriority, setTaskPriority] = useState("--Select priority--");
-  const [salesperson, setSalesPerson] = useState("");
+  const [taskPriorityField, setTaskPriorityField] = useState(
+    "--Select priority--"
+  );
+  const [salesperson, setSalesPerson] = useState("--Select Salesperson--");
+  const [salespersonField, setSalesPersonField] = useState(
+    "--Select Salesperson--"
+  );
   const [targetLocation, setTargetLocation] = useState("");
   let navigate = useNavigate();
 
@@ -33,7 +40,7 @@ function CreateTask() {
       try {
         const res = await fetch("http://localhost:5000/gettaskpriority");
         const data = await res.json();
-        setTaskPriority(data);
+        setTaskPriority(await data);
       } catch (err) {
         console.error(err);
       }
@@ -68,9 +75,9 @@ function CreateTask() {
         taskDescription: description,
         startDate: dateStart,
         endDate: dateEnd,
-        taskPriority: taskPriority,
-        taskType: taskType,
-        salespersonId: salesperson,
+        taskPriority: taskPriorityField,
+        taskType: taskTypeField,
+        salespersonId: salespersonField,
       }),
     })
       .then((res) => res.json())
@@ -109,8 +116,8 @@ function CreateTask() {
                 <label htmlFor="priority">Priority</label>
                 <select
                   className="form-select"
-                  value={taskPriority}
-                  onChange={(e) => setTaskPriority(e.target.value)}
+                  value={taskPriorityField}
+                  onChange={(e) => setTaskPriorityField(e.target.value)}
                 >
                   {Object.values(taskPriority).map((task) => (
                     <option key={task._id} value={task.priority}>
@@ -124,9 +131,9 @@ function CreateTask() {
                 <label htmlFor="taskType">Task Type</label>
                 <select
                   className="form-select"
-                  value={taskType}
+                  value={taskTypeField}
                   multiple={false}
-                  onChange={(e) => setTaskType(e.target.value)}
+                  onChange={(e) => setTaskTypeField(e.target.value)}
                 >
                   <option value="">--Select Task--</option>
                   {Object.values(taskType).map((task) => (
@@ -150,15 +157,14 @@ function CreateTask() {
                 <label htmlFor="selectSalesperson">Select Salesperson</label>
                 <select
                   className="form-select"
-                  value={salesperson}
+                  value={salespersonField}
                   multiple={false}
-                  onChange={(e) => setSalesPerson(e.target.value)}
+                  onChange={(e) => setSalesPersonField(e.target.value)}
                 >
                   <option value="">--Select Salesperson--</option>
                   {Object.values(salesperson).map((salesperson) => (
                     <option value={salesperson._id} key={salesperson._id}>
                       {salesperson.firstName}
-                      {/* {salesperson._id} */}
                     </option>
                   ))}
                 </select>
