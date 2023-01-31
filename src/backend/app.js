@@ -341,9 +341,9 @@ app.post('/users',(req,res)=>{
 
   var mailOptions = {
       from: 'ihtishamshami180@gmail.com',// sender address
-      to: req.body.to, // list of receivers
-      subject: req.body.subject, // Subject line
-      text:req.body.description,
+      to: req.body.to, // list of receivers////this will be our selected emailss heree
+      subject: req.body.subject, // Subject /// here type will
+      text:req.body.description,///here deciptionn
       html: `
       <div style="padding:10px;border-style: ridge">
       <p>You have a new contact request.</p>
@@ -351,7 +351,7 @@ app.post('/users',(req,res)=>{
       <ul>
           <li>Email: ${req.body.to}</li>
           <li>Subject: ${req.body.subject}</li>
-          <li>Message: ${req.body.description}</li>
+          <li>Discription: ${req.body.description}</li>
       </ul>
       `
   };

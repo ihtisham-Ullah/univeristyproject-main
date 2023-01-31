@@ -1,82 +1,104 @@
 // import "./notification.css";
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
+import Swal from "sweetalert2";
+import { autocompleteClasses } from "@mui/material";
+
 
 function Notification() {
-  const [msg, setMsg] = useState("");
-  const [selectedOptions, setSelectedOptions] = useState();
-  const [user, setUser] = useState({
-    to: "",
-    subject: "",
-    description: "",
+  const [message, setMessage] = useState("");
+  const [salesperson, setSalesPerson] = useState([]);
+  const [salespersonField, setSalesPersonField] = useState([]);
+  const [type, setType] = useState();
+  const [description, setDescription] = useState("");
+  useEffect(() => {
+    const getSalesperson = async () => {
+      const res = await fetch("http://localhost:5000/getsalesperson");
+      const data = await res.json();
 
-  });
+      const salesPersons = [];
+      data.forEach((user) => {
+        salesPersons.push({
+          value: user._id,
+          label: user.email,
+        });
+      });
 
-  const optionList = [
-    { value: "red", label: "Red" },
-    { value: "green", label: "Green" },
-    { value: "yellow", label: "Yellow" },
-    { value: "blue", label: "Blue" },
-    { value: "white", label: "White" },
-  ];
+      setSalesPerson(salesPersons);
+    };
+    getSalesperson();
+  }, []);
 
   const Ntypes = [
     { value: "warning", label: "Warning" },
     { value: "information", label: "Information" },
     { value: "reminder", label: "Reminder" },
-
   ];
 
-  const { to, subject, description } = user;
-  const onInputChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+  const onTypeInputChange = (e) => {
+    setType(e);
   };
 
-  const onSubmit = async (e, data) => {
+  const onDescriptionInputChange = (e) => {
+    setDescription(e.target.value);
+  };
+
+  const onSubmit = async (e) => {
     e.preventDefault();
-    await axios.post("http://localhost:5000/users/",user)
-   .then(response => setMsg(response.data.respMesg));
-    // setSelectedOptions(data);
+
+    console.log(description.length);
+    if (salespersonField.length < 1 || !type || description.length < 1)
+      return Swal.fire("Please fill all the fields", "", "error");
+
+    const formData = {
+      to: salespersonField.map((person) => person.label),
+      subject: type.label,
+      description,
+    };
+
+    const { data } = await axios.post(
+      "http://localhost:5000/users/",
+      formData,
+      { headers: { "Content-Type": "application/json" } }
+    );
+    Swal.fire("Notification Sent Successfully!", "", "success");
   };
   return (
-    <div className="container" style={{ marginTop: "5rem" }}>
-      <div class="row">
-        <div className="col-sm-4 mx-auto shadow p-5">
+    <div
+      className="container"
+      style={{ marginTop: "5rem", marginLeft: "25rem" }}
+    >
+      <div className="row">
+        <div className=" col-md-6 form-group mb-3">
           <h4 className="text-center mb-2">Send Notification </h4>
-          <p class="mb-3 mt-2" style={{ color: "green", marginLeft: "57px" }}>
-            <b>{msg}</b>
+          <p
+            className="mb-3 mt-2"
+            style={{ color: "green", marginLeft: "57px" }}
+          >
+            <b>{message}</b>
           </p>
           <div className="form-group mb-3">
-            <input
-              type="text"
-              className="form-control form-control-lg"
-              placeholder="To"
-              name="to"
-              onChange={onInputChange}
-              value={user.to}
+            <Select
+              required={true}
+              value={salespersonField}
+              isMulti={true}
+              options={salesperson}
+              onChange={(e) => {
+                setSalesPersonField(e);
+              }}
             />
           </div>
-          {/* <div className="form-group  mb-4 ">
-            <input
-              type="text"
-              className="form-control form-control-lg"
-              placeholder="Subject"
-              name="subject"
-              onChange={onInputChange}
-              value={subject}
-            />
-          </div> */}
 
           <div className="form-group  mb-4 ">
             <div className="dropdown-container">
               <Select
                 options={Ntypes}
                 placeholder="Select Type"
-                value={subject}
-                onChange={onInputChange}
+                value={type}
+                onChange={onTypeInputChange}
                 isSearchable={true}
-                isMulti
+                required={true}
               />
             </div>
           </div>
@@ -86,30 +108,18 @@ function Notification() {
               className="form-control form-control-lg"
               placeholder="Description"
               name="description"
-              onChange={onInputChange}
+              onChange={onDescriptionInputChange}
               value={description}
+              required={true}
             />
-          </div>
-
-          <div className="form-group  mb-4 ">
-            <div className="dropdown-container">
-              <Select
-                options={optionList}
-                placeholder="Select color"
-                value={selectedOptions}
-                onChange={onSubmit}
-                isSearchable={true}
-                isMulti
-              />
-            </div>
           </div>
 
           <button
             onClick={onSubmit}
             className="btn btn-primary btn-block "
-            style={{ marginLeft: "100px" }}
+            style={{ marginLeft: "30rem" }}
           >
-            Send Mail
+            Send
           </button>
         </div>
       </div>

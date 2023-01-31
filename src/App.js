@@ -5,7 +5,7 @@ import Sidebar from "../src/common/Layout/SideBar/SideBar";
 import Register from "../src/components/Auth/registerSalesperson/RegisterSalesperson";
 import Reset from "./components/Auth/resetPassword/reset";
 import Notification from "./components/notification/Notification";
-import ProtectedRoutes from "./components/protective/ProtectiveRoutes";
+
 import Attendance from "./components/Auth/attendance/Attendance";
 import Nopage from "./Nopage";
 import { allPrivateAppRoutes } from "./utitls/AllAppRoutes";
@@ -13,7 +13,6 @@ import ViewSalesperson from "./components/Auth/viewSalesperson/ViewSalesperson";
 import UpdateSalesperson from "./components/updateSalesperson/UpdateSalesperson";
 import CreateTask from "./components/ManageTask/CreateTask/CreateTask";
 import ViewTasks from "./components/ManageTask/ViewTasks/ViewTasks";
-import UpdateTasks from "./components/ManageTask/UpdateTasks/UpdateTasks";
 import UpdateedTask2 from "./components/ManageTask/CreateTask/CreateTask";
 
 const App = () => {
