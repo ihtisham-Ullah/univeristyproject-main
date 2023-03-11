@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "../../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./register.css";
 import Swal from "sweetalert2";
+import axios from "axios";
 const emailValidator =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+.[a-zA-Z]*$/;
 const passwordValidator =
@@ -27,6 +28,7 @@ export default class Register extends Component {
       password: "",
       passwordError: "",
       isFormSubmitted: false,
+      photo: null,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -55,11 +57,12 @@ export default class Register extends Component {
     return;
   }
 
-  handleSubmit(e) {
+  handleSubmit = async (e) => {
     e.preventDefault();
-    let { firstName, lastName, email, password, address, phoneNo } = this.state;
+    let { firstName, lastName, email, password, address, phoneNo, photo } =
+      this.state;
 
-    console.log(firstName, lastName, email, password, address, phoneNo);
+    console.log(firstName, lastName, email, password, address, phoneNo, photo);
 
     let formFields = [
       "firstName",
@@ -88,39 +91,33 @@ export default class Register extends Component {
     }
     if (!this.validateAddress()) {
     } else {
-      fetch("http://localhost:5000/register", {
-        method: "POST",
-        crossDomain: true,
-        headers: {
-          "content-type": "application/json",
-          Accept: "application/json",
-          "Access-Control-Allow-origin": "*",
-        },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          password,
-          address,
-          phoneNo,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.status !== "ok") {
-            if (data.error === "User Already Exists") {
-              Swal.fire("User Already Exists!", "", "error");
-            } else {
-              Swal.fire("Incorrect Data Entered!", "", "error");
-            }
+      const formData = new FormData();
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("phoneNo", phoneNo);
+      formData.append("address", address);
+      formData.append("photo", photo);
+
+      try {
+        const { data } = await axios.post(
+          "http://localhost:5000/register",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
           }
-          if (data.status === "ok") {
-            Swal.fire("Salesperson Registered!", "", "success");
-          }
-        });
+        );
+
+        console.log(data);
+        Swal.fire("Salesperson Registered!", "", "success");
+      } catch (err) {
+        console.log(err.response.data.error);
+        Swal.fire(err.response.data.error, "", "error");
+      }
     }
     return this.state.isFormSubmitted;
-  }
+  };
 
   validateField(name) {
     let isValid = false;
@@ -231,150 +228,172 @@ export default class Register extends Component {
         <div className="continer mx-5 p-5">
           <div className="  main">
             <h3>Register Salesperson</h3>
-            {this.state.isFormSubmitted ? (
+            {/* {this.state.isFormSubmitted ? (
               (window.location.href = "http://localhost:3000/Salesperson")
-            ) : (
-              <form onSubmit={this.handleSubmit}>
-                <div className="row">
-                  <div className=" col-md-6 form-group mb-3">
-                    <label htmlFor="firstName">First name</label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      placeholder="First Name"
-                      name="firstName"
-                      className="form-control"
-                      value={this.state.firstName}
-                      onChange={this.handleChange}
-                      onBlur={this.handleBlur}
-                      onInput={(e) =>
-                        (e.target.value = ("" + e.target.value).toLowerCase())
-                      }
-                      autoComplete="off"
-                      required
-                    />
+            ) : ( */}
+            <form onSubmit={this.handleSubmit}>
+              <div className="row">
+                <div className=" col-md-6 form-group mb-3">
+                  <label htmlFor="firstName">First name</label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    placeholder="First Name"
+                    name="firstName"
+                    className="form-control"
+                    value={this.state.firstName}
+                    onChange={this.handleChange}
+                    onBlur={this.handleBlur}
+                    onInput={(e) =>
+                      (e.target.value = ("" + e.target.value).toLowerCase())
+                    }
+                    autoComplete="off"
+                    required
+                  />
 
-                    {this.state.firstNameError && (
-                      <small class="text-danger">
-                        {" "}
-                        {this.state.firstNameError}{" "}
-                      </small>
-                    )}
-                  </div>
-
-                  <div className=" col-md-6 mb-3">
-                    <label>Last name</label>
-                    <input
-                      type="text"
-                      placeholder="Last Name"
-                      name="lastName"
-                      className="form-control"
-                      value={this.state.lastName}
-                      onChange={this.handleChange}
-                      onBlur={this.handleBlur}
-                      autoComplete="off"
-                      onInput={(e) =>
-                        (e.target.value = ("" + e.target.value).toLowerCase())
-                      }
-                      required
-                    />
-                    {this.state.lastNameError && (
-                      <small className="text-danger">
-                        {this.state.lastNameError}
-                      </small>
-                    )}
-                  </div>
-
-                  <div className="col-md-6 mb-3">
-                    <label>Email Address</label>
-                    <input
-                      type="email"
-                      placeholder="Email Address"
-                      name="email"
-                      className="form-control"
-                      value={this.state.email}
-                      onChange={this.handleChange}
-                      onBlur={this.handleBlur}
-                      autoComplete="off"
-                      required
-                    />
-                    {this.state.emailAddressError && (
-                      <small className=" text-danger">
-                        {this.state.emailAddressError}
-                      </small>
-                    )}
-                  </div>
-
-                  <div className="col-md-6 mb-3">
-                    <label>Password</label>
-                    <input
-                      type="password"
-                      placeholder="Password"
-                      name="password"
-                      className="form-control"
-                      value={this.state.password}
-                      onChange={this.handleChange}
-                      onBlur={this.handleBlur}
-                      autoComplete="off"
-                      required
-                    />
-
-                    {this.state.passwordError && (
-                      <small className=" text-danger">
-                        {this.state.passwordError}
-                      </small>
-                    )}
-                  </div>
-
-                  <div className="col-md-6 mb-3">
-                    <label>Phone Number</label>
-
-                    <input
-                      type="text"
-                      placeholder="Phone No"
-                      name="phoneNo"
-                      className="form-control"
-                      value={this.state.phoneNo}
-                      onChange={this.handleChange}
-                      onBlur={this.handleBlur}
-                      autoComplete="off"
-                      required
-                    />
-                    {this.state.phoneError && (
-                      <small className=" text-danger">
-                        {this.state.phoneError}
-                      </small>
-                    )}
-                  </div>
-
-                  <div className="col-md-6 mb-3">
-                    <label>Address</label>
-                    <input
-                      type="text"
-                      placeholder="Address"
-                      name="address"
-                      className="form-control"
-                      value={this.state.address}
-                      onChange={this.handleChange}
-                      onBlur={this.handleBlur}
-                      autoComplete="off"
-                      required
-                    />
-                    {this.state.addressError && (
-                      <small className=" text-danger">
-                        {this.state.addressError}
-                      </small>
-                    )}
-                  </div>
-
-                  <div className="col d-flex justify-content-end">
-                    <button type="submit" className="btn btn-primary">
-                      Register
-                    </button>
-                  </div>
+                  {this.state.firstNameError && (
+                    <small class="text-danger">
+                      {" "}
+                      {this.state.firstNameError}{" "}
+                    </small>
+                  )}
                 </div>
-              </form>
-            )}
+
+                <div className=" col-md-6 mb-3">
+                  <label>Last name</label>
+                  <input
+                    type="text"
+                    placeholder="Last Name"
+                    name="lastName"
+                    className="form-control"
+                    value={this.state.lastName}
+                    onChange={this.handleChange}
+                    onBlur={this.handleBlur}
+                    autoComplete="off"
+                    onInput={(e) =>
+                      (e.target.value = ("" + e.target.value).toLowerCase())
+                    }
+                    required
+                  />
+                  {this.state.lastNameError && (
+                    <small className="text-danger">
+                      {this.state.lastNameError}
+                    </small>
+                  )}
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label>Email Address</label>
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    name="email"
+                    className="form-control"
+                    value={this.state.email}
+                    onChange={this.handleChange}
+                    onBlur={this.handleBlur}
+                    autoComplete="off"
+                    required
+                  />
+                  {this.state.emailAddressError && (
+                    <small className=" text-danger">
+                      {this.state.emailAddressError}
+                    </small>
+                  )}
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    className="form-control"
+                    value={this.state.password}
+                    onChange={this.handleChange}
+                    onBlur={this.handleBlur}
+                    autoComplete="off"
+                    required
+                  />
+
+                  {this.state.passwordError && (
+                    <small className=" text-danger">
+                      {this.state.passwordError}
+                    </small>
+                  )}
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label>Phone Number</label>
+
+                  <input
+                    type="text"
+                    placeholder="Phone No"
+                    name="phoneNo"
+                    className="form-control"
+                    value={this.state.phoneNo}
+                    onChange={this.handleChange}
+                    onBlur={this.handleBlur}
+                    autoComplete="off"
+                    required
+                  />
+                  {this.state.phoneError && (
+                    <small className=" text-danger">
+                      {this.state.phoneError}
+                    </small>
+                  )}
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label>Address</label>
+                  <input
+                    type="text"
+                    placeholder="Address"
+                    name="address"
+                    className="form-control"
+                    value={this.state.address}
+                    onChange={this.handleChange}
+                    onBlur={this.handleBlur}
+                    autoComplete="off"
+                    required
+                  />
+                  {this.state.addressError && (
+                    <small className=" text-danger">
+                      {this.state.addressError}
+                    </small>
+                  )}
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label>Profile picture</label>
+                  <input
+                    type="file"
+                    placeholder="Profile picture"
+                    name="photo"
+                    className="form-control"
+                    accept="image/*"
+                    onChange={(e) =>
+                      this.setState({ photo: e.target.files[0] })
+                    }
+                    onBlur={this.handleBlur}
+                    autoComplete="off"
+                    required
+                  />
+                  {this.state.phoneError && (
+                    <small className=" text-danger">
+                      {this.state.phoneError}
+                    </small>
+                  )}
+                </div>
+
+                <div className="col d-flex justify-content-end">
+                  <button type="submit" className="btn btn-primary">
+                    Register
+                  </button>
+                </div>
+              </div>
+            </form>
+            {/* // )} */}
           </div>
         </div>
       </div>

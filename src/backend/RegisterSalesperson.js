@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
+const { required } = require("joi");
 
 const userDetailSchema = new mongoose.Schema(
   {
@@ -9,6 +10,8 @@ const userDetailSchema = new mongoose.Schema(
     password: String,
     address: String,
     phoneNo: String,
+    photo: String,
+    cloudinaryId: String,
   },
   {
     collection: "Userinfo",
@@ -22,7 +25,7 @@ function validateUser(user) {
     password: Joi.string().min(3).max(255).required(),
     address: Joi.string().min(5).max(50).required(),
     phoneNo: Joi.string().min(5).max(50).required(),
-
+    cloudinaryId: required(),
   });
 
   return schema.validate(user);

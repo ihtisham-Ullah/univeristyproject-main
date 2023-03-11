@@ -1,18 +1,24 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const cloudinary = require("cloudinary").v2;
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const mongodb = require("mongodb");
 var nodemailer = require("nodemailer");
+const multer = require("multer");
+const DatauriParser = require("datauri/parser");
+const path = require("path");
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
-const { validateUser } = require("./RegisterSalesperson");
+// const { validateUser } = require("./RegisterSalesperson");
+
 const { validateAdmin } = require("./adminDetail");
 const { validateTask } = require("./Task/CreateTask");
 
-app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = "hjgdhsgd786876$#$%$^%&*hvnsma";
 
@@ -32,34 +38,90 @@ require("./RegisterSalesperson");
 require("./Task/TaskPriority");
 require("./Task/TaskType");
 require("./Task/CreateTask");
+require("./Task/TaskDetail");
+require("./attendance/viewAttendance");
 
 const User = mongoose.model("Userinfo");
 const priority = mongoose.model("TaskPriority");
 const taskType = mongoose.model("TaskType");
 const createTask = mongoose.model("CreateTask");
+const getTasksFeedback = mongoose.model("TaskDetail");
+const attendance = mongoose.model("clockins");
+cloudinary.config({
+  cloud_name: "dm8mvmjp2",
+  api_key: "485161167585779",
+  api_secret: "kW-JBevf_NN5N-x8KbywrowLdHI",
+  secure: true,
+});
 
-app.post("/register", async (req, res) => {
-  const { error } = validateUser(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  const { firstName, lastName, email, password, address, phoneNo } = req.body;
-  const encryptedPassword = await bcrypt.hash(password, 10);
-  try {
-    const oldUser = await User.findOne({ email });
-    if (oldUser) {
-      return res.send({ error: "User Already Exists" });
+// multer configuration
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 3000000,
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Please upload image file."), false);
     }
-    await User.create({
-      firstName,
-      lastName,
-      email,
-      password: encryptedPassword,
-      address,
-      phoneNo,
+  },
+});
+
+const getDataUri = (file) => {
+  const parser = new DatauriParser();
+  const extName = path.extname(file.originalname).toString();
+
+  return parser.format(extName, file.buffer);
+};
+
+app.post("/register", upload.single("photo"), async (req, res, next) => {
+  //   const { error } = validateUser(req.body);
+  // if (error) return res.status(400).send(error.details[0].message);
+  console.log(req.body);
+
+  const photo = getDataUri(req.file);
+  try {
+    const encryptedPassword = await bcrypt.hash(req.body.password, 10);
+    const isDuplicate = await User.findOne({ email: req.body.email });
+
+    if (isDuplicate)
+      return res.status(400).json({ error: "duplicate email entered" });
+    const options = {
+      folder: "/photo",
+      width: 1000,
+      height: 1000,
+      crop: "scale",
+    };
+
+    cloudinary.uploader.upload(photo.content, options, (err, result) => {
+      let user = new User({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: encryptedPassword,
+        address: req.body.address,
+        phoneNo: req.body.phoneNo,
+        photo: result.url,
+        cloudinaryId: result.public_id,
+      });
+      user
+        .save()
+        .then((result) => {
+          res.status(200).json({
+            User: user,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(500).json({
+            error: err.message,
+          });
+        });
     });
-    res.send({ status: "ok" });
-  } catch (error) {
-    res.send({ status: "Error" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });
 
@@ -283,6 +345,24 @@ app.get("/getTasks", async (req, res) => {
   }
 });
 
+app.get("/getTasksFeedback", async (req, res) => {
+  try {
+    const data = await getTasksFeedback.find();
+    console.log(data);
+    res.send(data);
+  } catch (error) {
+    res.send({ status: "Error" });
+  }
+});
+app.delete("/getTasksFeedback/:id", async (req, res) => {
+  console.log(req.params.id);
+  let result = await getTasksFeedback.deleteOne({
+    _id: new mongodb.ObjectId(req.params.id),
+  });
+
+  res.send(result);
+});
+
 app.get("/getTasks/:id", async (req, res) => {
   try {
     let result = await createTask.findOne({ _id: req.params.id });
@@ -298,7 +378,7 @@ app.get("/getTasks/:id", async (req, res) => {
   }
 });
 
-app.delete("/tasks/:id", async (req, res) => {
+app.delete("/getTasks/:id", async (req, res) => {
   console.log(req.params.id);
   let result = await createTask.deleteOne({
     _id: new mongodb.ObjectId(req.params.id),
@@ -316,35 +396,21 @@ app.put("/updateTasks/:id", async (req, res) => {
   res.send(result);
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-app.post('/users',(req,res)=>{
- 
+app.post("/users", (req, res) => {
   var transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: "ihtishamshami180@gmail.com",
-        pass: "upcaqvopjftslhfj",
-      }
+    service: "gmail",
+    auth: {
+      user: "ihtishamshami180@gmail.com",
+      pass: "upcaqvopjftslhfj",
+    },
   });
 
   var mailOptions = {
-      from: 'ihtishamshami180@gmail.com',// sender address
-      to: req.body.to, // list of receivers////this will be our selected emailss heree
-      subject: req.body.subject, // Subject /// here type will
-      text:req.body.description,///here deciptionn
-      html: `
+    from: "ihtishamshami180@gmail.com", // sender address
+    to: req.body.to, // list of receivers////this will be our selected emailss heree
+    subject: req.body.subject, // Subject /// here type will
+    text: req.body.description, ///here deciptionn
+    html: `
       <div style="padding:10px;border-style: ridge">
       <p>You have a new contact request.</p>
       <h3>Contact Details</h3>
@@ -353,27 +419,75 @@ app.post('/users',(req,res)=>{
           <li>Subject: ${req.body.subject}</li>
           <li>Discription: ${req.body.description}</li>
       </ul>
-      `
+      `,
   };
-   
-  transporter.sendMail(mailOptions, function(error, info){
-      if (error)
-      {
-        res.json({status: true, respMesg: 'Email Sent Successfully'})
-      } 
-      else
-      {
-        res.json({status: true, respMesg: 'Email Sent Successfully'})
-      }
-   
-    });
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      res.json({ status: true, respMesg: "Email Sent Successfully" });
+    } else {
+      res.json({ status: true, respMesg: "Email Sent Successfully" });
+    }
+  });
 });
 
+// app.get("/viewattendance", async (req, res) => {
+//   try {
+//     const data = await attendance.find();
+//     // console.log(data);
+//     const ObjectId = require('mongodb').ObjectId;
 
+//     const cursor = attendance.find({}, { userId: 1 });
 
+//     const attendanceList = [];
+//     for await (const doc of cursor) {
+//       attendanceList.push(doc);
+//     }
+//     const userIds = attendanceList.map((doc) => ObjectId(doc.userId));
+//     const userPromises = userIds.map((id) => User.findOne({ _id: id }).select('-password'));
+//     const salespersonData = await Promise.all(userPromises);
 
+//     res.send(data);
+//   } catch (error) {
+//     console.log(error);
+//     res.send({ status: "Error" });
+//   }
+// });
 
+app.get("/viewattendance", async (req, res) => {
+  try {
+    const data = await attendance.find().lean();
+    const ObjectId = require("mongodb").ObjectId;
 
+    const cursor = attendance.find({}, { userId: 1 }).lean();
+    const attendanceList = [];
+    for await (const doc of cursor) {
+      attendanceList.push(doc);
+    }
+
+    const userIds = attendanceList.map((doc) => ObjectId(doc.userId));
+    const userPromises = userIds.map((id) =>
+      User.findOne({ _id: id }).select("-password -address").lean()
+    );
+    const salespersonData = await Promise.all(userPromises);
+
+    const mergedData = data.map((attendanceDoc) => {
+      const salespersonDoc = salespersonData.find((userDoc) =>
+        userDoc._id.equals(attendanceDoc.userId)
+      );
+      if (salespersonDoc) {
+        return { ...attendanceDoc, ...salespersonDoc };
+      } else {
+        return attendanceDoc;
+      }
+    });
+
+    res.send(mergedData);
+  } catch (error) {
+    console.log(error);
+    res.send({ status: "Error" });
+  }
+});
 
 app.listen(5000, () => {
   console.log("server started");

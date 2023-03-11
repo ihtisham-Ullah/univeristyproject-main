@@ -43,7 +43,7 @@ function Login() {
           if (data.status === "ok") {
             localStorage.setItem("user", state.email);
             Swal.fire("Login Successfully!", "", "success");
-            navigate("/Sidebar");
+            navigate("/Register");
           }
         });
     } else {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { Link } from "react-router-dom";
-import { CircularProgress, Backdrop } from "@mui/material";
+
 function ViewTasks() {
   const [list, setList] = useState([]);
   const [Loader, setLoadder] = useState(false);
@@ -36,7 +36,7 @@ function ViewTasks() {
 
   function deleteTasks(id) {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      fetch(`http://localhost:5000/tasks/${id}`, {
+      fetch(`http://localhost:5000/getTasks/${id}`, {
         method: "DELETE",
         crossDomain: true,
       }).then((result) => {
@@ -49,38 +49,13 @@ function ViewTasks() {
 
   return (
     <>
-      <Backdrop
+      {/* <Backdrop
         sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={Loader}
       >
         <CircularProgress />
-      </Backdrop>
-      <nav
-        className="nav nav-pills flex-column flex-sm-row"
-        style={{ marginTop: "5rem", marginLeft: "5rem" }}
-      >
-        <a
-          className="flex-sm-fill text-sm-center nav-link active"
-          aria-current="page"
-          href="!#"
-        >
-          Active
-        </a>
-        <a className="flex-sm-fill text-sm-center nav-link" href="!#">
-          Longer nav link
-        </a>
-        <a class="flex-sm-fill text-sm-center nav-link" href="!#">
-          Link
-        </a>
-        <a
-          className="flex-sm-fill text-sm-center nav-link disabled"
-          href="!#"
-          tabindex="-1"
-          aria-disabled="true"
-        >
-          Disabled
-        </a>
-      </nav>
+      </Backdrop> */}
+
       <p className="h3" style={{ marginTop: "7rem", marginLeft: "35rem" }}>
         Assigned Tasks
       </p>
