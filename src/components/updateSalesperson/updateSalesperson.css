@@ -79,3 +79,7 @@ span {
 .forgot-password a {
   color: #167bff;
 }
+
+.photo-container {
+  margin-top: 10px;
+}

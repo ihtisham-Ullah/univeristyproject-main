@@ -1,9 +1,8 @@
 import { React, useState, useEffect } from "react";
+import "./notication.css";
 import axios from "axios";
 import Select from "react-select";
 import Swal from "sweetalert2";
-
-
 
 function Notification() {
   const [message, setMessage] = useState("");
@@ -11,6 +10,7 @@ function Notification() {
   const [salespersonField, setSalesPersonField] = useState([]);
   const [type, setType] = useState();
   const [description, setDescription] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const getSalesperson = async () => {
       const res = await fetch("http://localhost:5000/getsalesperson");
@@ -45,7 +45,7 @@ function Notification() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     console.log(description.length);
     if (salespersonField.length < 1 || !type || description.length < 1)
       return Swal.fire("Please fill all the fields", "", "error");
@@ -55,13 +55,18 @@ function Notification() {
       subject: type.label,
       description,
     };
-
-    const { data } = await axios.post(
-      "http://localhost:5000/users/",
-      formData,
-      { headers: { "Content-Type": "application/json" } }
-    );
-    Swal.fire("Notification Sent Successfully!", "", "success");
+    try {
+      const { data } = await axios.post(
+        "http://localhost:5000/users/",
+        formData,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      Swal.fire("Notification Sent Successfully!", "", "success");
+    } catch (err) {
+      console.log(err.response.data.error);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div
@@ -113,17 +118,26 @@ function Notification() {
             />
           </div>
 
-          <button
-            onClick={onSubmit}
-            className="btn btn-primary btn-block "
-            style={{ marginLeft: "30rem" }}
-          >
-            Send
-          </button>
+          {isLoading ? (
+            <button className="btn btn-primary" disabled>
+              <span
+                className="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              Sending...
+            </button>
+          ) : (
+            <button
+              onClick={onSubmit}
+              className="btn btn-primary btn-block "
+              style={{ marginLeft: "30rem" }}
+            >
+              Send
+            </button>
+          )}
         </div>
       </div>
-
-      {/* <h2>Choose your color</h2> */}
     </div>
   );
 }

@@ -9,9 +9,20 @@ var nodemailer = require("nodemailer");
 const multer = require("multer");
 const DatauriParser = require("datauri/parser");
 const path = require("path");
+const fs = require("fs");
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: false }));
-// const { validateUser } = require("./RegisterSalesperson");
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000"); // Update this with your client URL
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+const bodyParser = require("body-parser");
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 const { validateAdmin } = require("./adminDetail");
 const { validateTask } = require("./Task/CreateTask");
@@ -40,6 +51,7 @@ require("./Task/TaskType");
 require("./Task/CreateTask");
 require("./Task/TaskDetail");
 require("./attendance/viewAttendance");
+require("./Media/Media");
 
 const User = mongoose.model("Userinfo");
 const priority = mongoose.model("TaskPriority");
@@ -47,6 +59,8 @@ const taskType = mongoose.model("TaskType");
 const createTask = mongoose.model("CreateTask");
 const getTasksFeedback = mongoose.model("TaskDetail");
 const attendance = mongoose.model("clockins");
+const Media = mongoose.model("Media");
+
 cloudinary.config({
   cloud_name: "dm8mvmjp2",
   api_key: "485161167585779",
@@ -125,6 +139,54 @@ app.post("/register", upload.single("photo"), async (req, res, next) => {
   }
 });
 
+app.put("/updateSalesperson/:id", upload.single("photo"), async (req, res) => {
+  try {
+    let photoUrl = null;
+    if (req.file) {
+      const photo = getDataUri(req.file);
+      const options = {
+        folder: "/photo",
+        width: 1000,
+        height: 1000,
+        crop: "scale",
+      };
+      // upload photo to Cloudinary and get URL
+      const result = await cloudinary.uploader.upload(photo.content, options);
+      photoUrl = result.url;
+    }
+
+    // update user document in database
+    const update = {};
+    if (req.body.firstName) {
+      update.firstName = req.body.firstName;
+    }
+    if (req.body.lastName) {
+      update.lastName = req.body.lastName;
+    }
+    if (req.body.email) {
+      update.email = req.body.email;
+    }
+    if (req.body.address) {
+      update.address = req.body.address;
+    }
+    if (req.body.phoneNo) {
+      update.phoneNo = req.body.phoneNo;
+    }
+    if (photoUrl) {
+      update.photo = photoUrl;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, update, {
+      new: true,
+    });
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.get("/getsalesperson", async (req, res) => {
   try {
     const data = await User.find();
@@ -157,12 +219,6 @@ app.get("/getsalesperson/:id", async (req, res) => {
   } catch (error) {
     res.send({ status: "Error" });
   }
-});
-
-app.put("/updateSalesperson/:id", async (req, res) => {
-  console.log(req.body);
-  let result = await User.updateOne({ _id: req.params.id }, { $set: req.body });
-  res.send(result);
 });
 
 require("./adminDetail");
@@ -316,6 +372,7 @@ app.post("/createTask", async (req, res) => {
     taskType,
     targetLocation,
     salespersonId,
+    firstName,
   } = req.body;
 
   try {
@@ -328,6 +385,7 @@ app.post("/createTask", async (req, res) => {
       taskType,
       targetLocation,
       salespersonId,
+      firstName,
     });
     res.send({ status: "ok" });
   } catch (error) {
@@ -338,6 +396,7 @@ app.post("/createTask", async (req, res) => {
 app.get("/getTasks", async (req, res) => {
   try {
     const data = await createTask.find();
+
     console.log(data);
     res.send(data);
   } catch (error) {
@@ -431,29 +490,6 @@ app.post("/users", (req, res) => {
   });
 });
 
-// app.get("/viewattendance", async (req, res) => {
-//   try {
-//     const data = await attendance.find();
-//     // console.log(data);
-//     const ObjectId = require('mongodb').ObjectId;
-
-//     const cursor = attendance.find({}, { userId: 1 });
-
-//     const attendanceList = [];
-//     for await (const doc of cursor) {
-//       attendanceList.push(doc);
-//     }
-//     const userIds = attendanceList.map((doc) => ObjectId(doc.userId));
-//     const userPromises = userIds.map((id) => User.findOne({ _id: id }).select('-password'));
-//     const salespersonData = await Promise.all(userPromises);
-
-//     res.send(data);
-//   } catch (error) {
-//     console.log(error);
-//     res.send({ status: "Error" });
-//   }
-// });
-
 app.get("/viewattendance", async (req, res) => {
   try {
     const data = await attendance.find().lean();
@@ -465,7 +501,9 @@ app.get("/viewattendance", async (req, res) => {
       attendanceList.push(doc);
     }
 
-    const userIds = attendanceList.map((doc) => ObjectId(doc.userId));
+    const userIds = attendanceList
+      .filter((doc) => doc.userId !== null && doc.userId !== undefined)
+      .map((doc) => ObjectId(doc.userId));
     const userPromises = userIds.map((id) =>
       User.findOne({ _id: id }).select("-password -address").lean()
     );
@@ -488,6 +526,102 @@ app.get("/viewattendance", async (req, res) => {
     res.send({ status: "Error" });
   }
 });
+app.get("/attendance", async (req, res) => {
+  try {
+    const data = await attendance.find();
+    console.log(data);
+    res.send(data);
+  } catch (error) {
+    res.send({ status: "Error" });
+  }
+});
+
+
+
+const storage = multer({
+  storage: multer.diskStorage({}),
+  fileFilter: (req, file, cb) => {
+    let ext = path.extname(file.originalname);
+    if (
+      ext !== ".mp4" &&
+      ext !== ".mkv" &&
+      ext !== ".jpeg" &&
+      ext !== ".jpg" &&
+      ext !== ".png"
+    ) {
+      cb(new Error("File type is not supported"), false);
+      return;
+    }
+    cb(null, true);
+  },
+});
+
+app.post("/uploadVideo", storage.single("file"), (req, res) => {
+  const { salespersonId, title } = req.body;
+  cloudinary.uploader.upload(
+    req.file.path,
+    {
+      resource_type: "video",
+      folder: "video",
+    },
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send(err);
+      }
+
+      const media = new Media({
+        name: req.file.originalname,
+        url: result.url,
+        cloudinary_id: result.public_id,
+        salespersonId: salespersonId,
+        title: title,
+      });
+
+      media.save((err, savedMedia) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send(err);
+        }
+        return res.status(200).send(savedMedia);
+      });
+    }
+  );
+});
+
+
+
+
+app.get("/getmedia", async (req, res) => {
+  try {
+    const media = await Media.find().lean();
+    const salespersonIds = media.map((m) => m.salespersonId);
+    const users = await User.find({ _id: { $in: salespersonIds } }).lean();
+    const mediaWithUsers = media.map((m) => {
+      const user = users.find(
+        (u) => u._id.toString() === m.salespersonId.toString()
+      );
+      const { salespersonId, ...rest } = m;
+      delete user.email;
+      delete user.password; 
+      delete user.updatedAt; 
+      delete user.createdAt; 
+      delete user.cloudinaryId; 
+      delete user.photo; 
+      delete user.phoneNo; 
+      delete user.address; 
+      delete user.lastName; 
+      return { ...rest, ...user };
+    });
+    res.json(mediaWithUsers);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json(error);
+  }
+});
+
+
+
 
 app.listen(5000, () => {
   console.log("server started");

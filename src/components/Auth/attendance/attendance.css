@@ -1,0 +1,121 @@
+/* table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  margin-top: 80px;
+  margin-left: 80px;
+  background-color: #fff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+th {
+  background-color: #f8f8f8;
+  color: #333;
+  font-weight: bold;
+  text-align: left;
+  padding: 15px;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+td {
+  border-bottom: 1px solid #eee;
+  color: #666;
+  padding: 10px 15px;
+}
+
+td:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+td:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin: 0 4px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #3e8e41;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+} */
+.attendance-table-container {
+  display: flex;
+  justify-content: center;
+  margin: 50px;
+  max-width: 2000px;
+}
+
+.attendance-table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 4000px;
+  margin-left: 30px;
+  margin-top: 30px;
+}
+
+.attendance-table th,
+.attendance-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.attendance-table th {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+.attendance-table td img.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.attendance-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.attendance-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.attendance-table button {
+  background-color: #f44336;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.attendance-table button:hover {
+  background-color: #d32f2f;
+}

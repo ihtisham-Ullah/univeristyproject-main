@@ -50,64 +50,6 @@ function ViewSalesperson() {
       >
         Registered Salesperson
       </p>
-      {/* <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <section class="section">
-                <div class="card">
-                  <div class="card-body">
-                    <table class="table table-striped" id="table1">
-                      <thead>
-                        <tr>
-                          <th>First Name</th>
-                          <th>Last Name</th>
-                          <th> Email Address</th>
-                          <th>Phone</th>
-                          <th>Address</th>
-                          <th>Profile</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {list?.map((d) => (
-                          <tr key={d._id}>
-                            <td>{d.firstName}</td>
-                            <td>{d.lastName}</td>
-                            <td>{d.email}</td>
-                            <td>{d.phoneNo}</td>
-                            <td>{d.address}</td>
-                            <td>
-                              <img
-                                src={d.photo}
-                                alt=""
-                                width={"300rem"}
-                                height={"300rem"}
-                              />
-                            </td>
-
-                            <td>
-                              <button
-                                className="btn btn-danger btn-sm"
-                                onClick={() => deleteSalesperson(d._id)}
-                              >
-                                Delete
-                              </button>
-                              <Link
-                                to={"/updateSalesperson/" + d._id}
-                                className="btn btn-primary btn-sm m-1"
-                              >
-                                Update
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
-        </div> */}
 
       <div className="clearfix" style={{ marginLeft: "5rem" }}>
         <div className="row">
@@ -129,7 +71,7 @@ function ViewSalesperson() {
                   </div>
                   <h5 className="card-title">{data.firstName}</h5>
                   <div className="card-text">
-                    <p>{data.address}</p>
+                    <p>{data.email}</p>
                     <p className="phone">{data.phoneNo}</p>
                   </div>
                   <div className="buttons">

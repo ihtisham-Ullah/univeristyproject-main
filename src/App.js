@@ -16,6 +16,8 @@ import ViewTasks from "./components/ManageTask/ViewTasks/ViewTasks";
 import UpdateedTask2 from "./components/ManageTask/CreateTask/CreateTask";
 import ViewTasksfeedback from "components/ManageTask/ViewTasks/ViewTasksfeedback";
 import ProtectedRoutes from "./components/protective/ProtectiveRoutes";
+import SalespersonAttendance from "./components/Auth/attendance/SalespersonAttendance";
+import UploadVideo from "components/Auth/Training/UploadVideo";
 
 const App = () => {
   return (
@@ -28,6 +30,10 @@ const App = () => {
           <Route path="/Layout" element={Layout} />
           <Route path="/Register" element={<Register />} />
           <Route path="/Attendance" element={<Attendance />} />
+          <Route
+            path="/SalespersonAttendance"
+            element={<SalespersonAttendance />}
+          />
           <Route path="/Salesperson" element={<ViewSalesperson />} />
           <Route
             path="/UpdateSalesperson/:id"
@@ -37,6 +43,7 @@ const App = () => {
           <Route path="/ViewTasks" element={<ViewTasks />} />
           <Route path="/ViewTasksFeedback" element={<ViewTasksfeedback />} />
           <Route path="/UpdateTasks/:id" element={<UpdateedTask2 />} />
+          <Route path="/UploadVideo" element={<UploadVideo />} />
         </Route>
         <Route path="/" element={<LoginPage />} />
         <Route path="/Reset" element={<Reset />} />

@@ -72,6 +72,13 @@ function CreateTask() {
         handleUpdateTask(data);
         return;
       }
+      
+      let getSalesperson = await axios.get(
+        "http://localhost:5000/getsalesperson"
+      );
+      let firstName = getSalesperson?.data.filter(
+        (item) => item._id === data.salespersonId
+      )[0].firstName;
       await fetch("http://localhost:5000/createTask", {
         method: "POST",
         crossDomain: true,
@@ -82,7 +89,8 @@ function CreateTask() {
         },
         body: JSON.stringify({
           ...data,
-        }),
+          firstName: firstName,
+        }), 
       })
         .then((res) => res.json())
         .then((data) => {

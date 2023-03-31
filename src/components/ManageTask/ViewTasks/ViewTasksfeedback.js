@@ -1,45 +1,41 @@
 import React, { useState, useEffect } from "react";
+import { Card, Button, Container, Row, Col, Spinner } from "react-bootstrap";
 
 function ViewTasksfeedback() {
   const [list, setList] = useState([]);
-  const [Loader, setLoadder] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const getTasksFeedback = async () => {
     try {
-      setLoadder(true);
-      await fetch("http://localhost:5000/getTasksFeedback", {
+      setLoading(true);
+      const response = await fetch("http://localhost:5000/getTasksFeedback", {
         method: "GET",
         crossDomain: true,
-
         headers: {
           "content-type": "application/json",
           Accept: "application/json",
           "Access-Control-Allow-origin": "*",
         },
-      }).then((result) => {
-        result.json().then((resp) => {
-          setList(resp);
-          setLoadder(false);
-        });
       });
-      setLoadder(false);
+      const data = await response.json();
+      setList(data);
+      setLoading(false);
     } catch (error) {
       console.log("error", error);
-      setLoadder(false);
+      setLoading(false);
     }
   };
   useEffect(() => {
     getTasksFeedback();
   }, []);
+
   function deleteTasks(id) {
     if (window.confirm("Are you sure you want to delete this Feedback?")) {
       fetch(`http://localhost:5000/getTasksFeedback/${id}`, {
         method: "DELETE",
         crossDomain: true,
-      }).then((result) => {
-        result.json().then((resp) => {
-          getTasksFeedback();
-        });
+      }).then(() => {
+        getTasksFeedback();
       });
     }
   }
@@ -49,57 +45,45 @@ function ViewTasksfeedback() {
       <p className="h3" style={{ marginTop: "7rem", marginLeft: "35rem" }}>
         Completed Tasks
       </p>
-      <div style={{ marginLeft: "5rem" }}>
-        <div className="container">
-          <div className=" row mb-2">
-            {list?.map((d) => (
-              <div className="col-md-3">
-                <div class="card-deck">
-                  <div
-                    class="card mb-1 bg-primary text-white"
-                    style={{ width: "15rem" }}
-                  >
-                    <h5 class="card-header">{d.taskName}</h5>
-                    <div class="card-body">
-                      <p class="card-text">
-                        <h6 style={{ display: "inline", color: "black" }}>
-                          Task Status:
-                        </h6>{" "}
-                        {d.taskStatus}
-                      </p>
-                      <p>
-                        <h6 style={{ display: "inline", color: "black" }}>
-                          Completion Date:
-                        </h6>{" "}
-                        {d.CompletedTask}
-                      </p>
-                      <p>
-                        <h6 style={{ display: "inline", color: "black" }}>
-                          Feedback:
-                        </h6>{" "}
-                        {d.feedback}
-                      </p>
-                      <p class="card-text">
-                        <h6 style={{ display: "inline", color: "black" }}>
-                          Location:
-                        </h6>{" "}
-                        {d.CurrentLocation}
-                      </p>
-                    </div>
-                    <button
+      <Container className="mt-5">
+        {loading ? (
+          <div className="d-flex justify-content-center">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        ) : (
+          <Row xs={1} md={2} lg={3} className="g-4">
+            {list.map((d) => (
+              <Col key={d._id}>
+                <Card className="mb-3">
+                  <Card.Header>{d.taskName}</Card.Header>
+                  <Card.Body>
+                    <Card.Text>
+                      <strong>Task Status:</strong> {d.taskStatus}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Completion Date:</strong> {d.CompletedTask}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Feedback:</strong> {d.feedback}
+                    </Card.Text>
+                    <Card.Text>
+                      <strong>Location:</strong> {d.CurrentLocation}
+                    </Card.Text>
+                  </Card.Body>
+                  <Card.Footer>
+                    <Button
+                      variant="outline-danger"
                       onClick={() => deleteTasks(d._id)}
-                      type="button"
-                      class="btn btn-outline-danger"
                     >
                       Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
+                    </Button>
+                  </Card.Footer>
+                </Card>
+              </Col>
             ))}
-          </div>
-        </div>
-      </div>
+          </Row>
+        )}
+      </Container>
     </>
   );
 }

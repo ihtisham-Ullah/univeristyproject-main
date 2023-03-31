@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from "react";
-
 import { Link } from "react-router-dom";
+
+import { Table, Spinner, Button } from "react-bootstrap";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import * as XLSX from "xlsx";
 
 function ViewTasks() {
   const [list, setList] = useState([]);
-  const [Loader, setLoadder] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getTasks = async () => {
     try {
-      setLoadder(true);
-      await fetch("http://localhost:5000/getTasks", {
+      setIsLoading(true);
+      const response = await fetch("http://localhost:5000/getTasks", {
         method: "GET",
         crossDomain: true,
-
         headers: {
           "content-type": "application/json",
           Accept: "application/json",
           "Access-Control-Allow-origin": "*",
         },
-      }).then((result) => {
-        result.json().then((resp) => {
-          setList(resp);
-          setLoadder(false);
-        });
       });
-      setLoadder(false);
+      const data = await response.json();
+      setList(data);
+      setIsLoading(false);
     } catch (error) {
       console.log("error", error);
-      setLoadder(false);
+      setIsLoading(false);
     }
   };
+
   useEffect(() => {
     getTasks();
   }, []);
@@ -39,91 +39,137 @@ function ViewTasks() {
       fetch(`http://localhost:5000/getTasks/${id}`, {
         method: "DELETE",
         crossDomain: true,
-      }).then((result) => {
-        result.json().then((resp) => {
-          getTasks();
-        });
-      });
+      })
+        .then((result) => {
+          result.json().then((resp) => {
+            getTasks();
+          });
+        })
+        .catch((error) => console.log(error));
     }
   }
+  const getBadgeColor = (priority) => {
+    switch (priority.toLowerCase()) {
+      case "high":
+        return "danger";
+      case "normal":
+        return "warning";
+      case "low":
+        return "secondary";
+      default:
+        return "secondary";
+    }
+  };
+  const exportToExcel = () => {
+    const fileType =
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+    const fileExtension = ".xlsx";
+    const fileName = "tasks_data";
+    const filteredList = list.map(
+      ({
+        taskDescription,
+        taskType,
+        targetLocation,
+        taskPriority,
+        startDate,
+        endDate,
+        taskName,
+      }) => ({
+        taskName,
+        taskDescription,
+        taskType,
+        taskPriority,
+        targetLocation,
+        startDate,
+        endDate,
+      })
+    );
+    console.log(filteredList);
+    const ws = XLSX.utils.json_to_sheet(filteredList);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    const url = window.URL.createObjectURL(data);
+    const downloadLink = document.createElement("a");
+    downloadLink.href = url;
+    downloadLink.download = fileName + fileExtension;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
 
   return (
-    <>
-      {/* <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={Loader}
+    <div style={{ marginTop: "7rem" }}>
+      <h1 className="text-center mb-4">Assigned Tasks</h1>
+
+      <Button
+        variant="primary"
+        onClick={() => exportToExcel()}
+        style={{ marginLeft: "75px" }}
       >
-        <CircularProgress />
-      </Backdrop> */}
+        Export to Excel
+      </Button>
+      {isLoading ? (
+        <Spinner animation="border" role="status">
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+      ) : (
+        <Table
+          striped
+          bordered
+          hover
+          responsive
+          style={{ marginLeft: "4.5rem" }}
+        >
+          <thead>
+            <tr>
+              <th>Task Name</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Priority</th>
 
-      <p className="h3" style={{ marginTop: "7rem", marginLeft: "35rem" }}>
-        Assigned Tasks
-      </p>
-      <div style={{ marginLeft: "5rem" }}>
-        <div className="container">
-          <div className=" row mb-2">
-            {list?.map((d) => (
-              <div className="col-md-3">
-                <div class="card-deck">
-                  <div
-                    class="card mb-1 bg-primary text-white"
-                    style={{ width: "15rem" }}
+              <th>Location</th>
+              <th>End Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {list?.map((d, i) => (
+              <tr key={d._id}>
+                <td>{d.taskName}</td>
+                <td>{d.taskDescription}</td>
+                <td>{d.taskType}</td>
+                <td>
+                  <span className={`badge bg-${getBadgeColor(d.taskPriority)}`}>
+                    {d.taskPriority}
+                  </span>
+                </td>
+
+                <td>{d.targetLocation}</td>
+                <td>{new Date(d.endDate).toLocaleDateString()}</td>
+                <td>
+                  <Link
+                    style={{ marginLeft: "0px", marginBottom: "1rem" }}
+                    to={`/updateTasks/${d._id}`}
+                    // className="btn btn-primary btn-sm"
                   >
-                    <h5 class="card-header">{d.taskName}</h5>
-                    <div class="card-body">
-                      <p class="card-text">
-                        <h6 style={{ display: "inline", color: "black" }}>
-                          Description:
-                        </h6>{" "}
-                        {d.taskDescription}
-                      </p>
-                      <p>
-                        <h6 style={{ display: "inline", color: "black" }}>
-                          Type:
-                        </h6>{" "}
-                        {d.taskType}
-                      </p>
-                      <p>
-                        <h6 style={{ display: "inline", color: "black" }}>
-                          Priority:
-                        </h6>{" "}
-                        {d.taskPriority}
-                      </p>
-                      <p class="card-text">
-                        <h6 style={{ display: "inline", color: "black" }}>
-                          Location:
-                        </h6>{" "}
-                        {d.targetLocation}
-                      </p>
-                      <p class="card-text">
-                        <h6 style={{ display: "inline", color: "black" }}>
-                          End Date:
-                        </h6>{" "}
-                        {d.endDate}
-                      </p>
-                    </div>
-                    <Link
-                      to={"/updateTasks/" + d._id}
-                      className="btn btn-outline-warning"
-                    >
-                      Update
-                    </Link>
+                    <FaEdit /> Edit
+                  </Link>
 
-                    <button
-                      onClick={() => deleteTasks(d._id)}
-                      type="button"
-                      class="btn btn-outline-danger"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
+                  <Button
+                    variant="danger"
+                    onClick={() => deleteTasks(d._id)}
+                    style={{ marginTop: "6px" }}
+                  >
+                    <FaTrash /> Delete
+                  </Button>
+                </td>
+              </tr>
             ))}
-          </div>
-        </div>
-      </div>
-    </>
+          </tbody>
+        </Table>
+      )}
+    </div>
   );
 }
 

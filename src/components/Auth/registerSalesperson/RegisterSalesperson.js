@@ -99,7 +99,7 @@ export default class Register extends Component {
       formData.append("phoneNo", phoneNo);
       formData.append("address", address);
       formData.append("photo", photo);
-
+      console.log(photo);
       try {
         const { data } = await axios.post(
           "http://localhost:5000/register",
@@ -379,11 +379,6 @@ export default class Register extends Component {
                     autoComplete="off"
                     required
                   />
-                  {this.state.phoneError && (
-                    <small className=" text-danger">
-                      {this.state.phoneError}
-                    </small>
-                  )}
                 </div>
 
                 <div className="col d-flex justify-content-end">

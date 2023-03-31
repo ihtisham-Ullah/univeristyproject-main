@@ -202,7 +202,13 @@ export default function MiniDrawer({ childprops }) {
             },
             {
               name: "Completed Tasks",
-              icon: <TaskIcon onClick={(e) => navigate(`/ViewTasksFeedback`)} />,
+              icon: (
+                <TaskIcon onClick={(e) => navigate(`/ViewTasksFeedback`)} />
+              ),
+            },
+            {
+              name: "Training",
+              icon: <TaskIcon onClick={(e) => navigate(`/UploadVideo`)} />,
             },
             {
               name: "Logout",
