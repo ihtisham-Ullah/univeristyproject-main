@@ -78,29 +78,28 @@ function UploadVideo() {
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center"
-      style={{ height: "200vh" }}
-    >
-      <div className="card" style={{ width: "50rem" }}>
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", backgroundColor: "#f2f2f2" }}>
+      <div className="card bg-light" style={{ width: "40rem", borderRadius: "10px", boxShadow: "0px 0px 5px 1px rgba(0,0,0,0.15)" }}>
         <div className="card-body">
-          <h5 className="card-title">Assign Video</h5>
+          <h5 className="card-title text-center mb-4">Assign Video</h5>
           <form onSubmit={handleSubmit}>
-            <div className="form-group">
+            <div className="form-group mb-4">
               <label htmlFor="title">Video Title:</label>
               <input
                 type="text"
                 id="title"
                 onChange={handleTitleChange}
                 className="form-control"
+                style={{ backgroundColor: "#f7f7f7" }}
               />
             </div>
-            <div className="form-group">
+            <div className="form-group mb-4">
               <label htmlFor="salesperson">Select Salesperson:</label>
               <select
                 id="salesperson"
                 onChange={handleSalespersonChange}
                 className="form-control"
+                style={{ backgroundColor: "#f7f7f7" }}
               >
                 <option value="">Select a salesperson</option>
                 {salespersons.map((salesperson) => (
@@ -110,7 +109,7 @@ function UploadVideo() {
                 ))}
               </select>
             </div>
-            <div className="form-group">
+            <div className="form-group mb-4">
               <label htmlFor="file">Choose a file:</label>
               <div className="custom-file">
                 <input
@@ -119,55 +118,28 @@ function UploadVideo() {
                   onChange={handleFileChange}
                   className="custom-file-input"
                 />
+                
               </div>
             </div>
             {errorMessage && (
               <div className="alert alert-danger">{errorMessage}</div>
             )}
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary btn-block mt-4" style={{ backgroundColor: "#5f73a5", border: "none" }}>
               Upload
             </button>
             {isLoading && (
-              <div className="mt-3">
-                <i className="fas fa-spinner fa-spin"></i> Uploading...
+              <div className="text-center mt-3">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="sr-only">Loading...</span>
+                </div>
               </div>
             )}
           </form>
-          <table className="table mt-5">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Video Title</th>
-                <th>Video</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {mediaList.map((media) => (
-                <tr key={media._id}>
-                  <td>{media.firstName}</td>
-                  <td>{media.title}</td>
-                  <td>
-                    <video width="320" height="240" controls>
-                      <source src={media.url} />
-                    </video>
-                  </td>
-                  <td>
-                    <button
-                    // className="btn btn-danger"
-                    // onClick={() => handleDelete(media._id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
   );
+
 }
 
 export default UploadVideo;

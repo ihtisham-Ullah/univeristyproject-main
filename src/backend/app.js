@@ -101,7 +101,7 @@ app.post("/register", upload.single("photo"), async (req, res, next) => {
     const isDuplicate = await User.findOne({ email: req.body.email });
 
     if (isDuplicate)
-      return res.status(400).json({ error: "duplicate email entered" });
+      return res.status(400).json({ error: "This email is already taken" });
     const options = {
       folder: "/photo",
       width: 1000,
@@ -183,7 +183,7 @@ app.put("/updateSalesperson/:id", upload.single("photo"), async (req, res) => {
     res.json(updatedUser);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Email is already taken" });
   }
 });
 
@@ -226,8 +226,8 @@ require("./adminDetail");
 const Admin = mongoose.model("Admininfo");
 
 app.post("/login-user", async (req, res) => {
-  const { error } = validateAdmin(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  // const { error } = validateAdmin(req.body);
+  // if (error) return res.status(400).send(error.details[0].message);
   const { email, password } = req.body;
 
   const user = await Admin.findOne({ email });
@@ -514,18 +514,23 @@ app.get("/viewattendance", async (req, res) => {
         userDoc._id.equals(attendanceDoc.userId)
       );
       if (salespersonDoc) {
-        return { ...attendanceDoc, ...salespersonDoc };
+        return {
+          ...attendanceDoc,
+          ...salespersonDoc,
+          attId: attendanceDoc._id,
+        };
       } else {
         return attendanceDoc;
       }
     });
 
     res.send(mergedData);
-  } catch (error) {
-    console.log(error);
-    res.send({ status: "Error" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal server error");
   }
 });
+
 app.get("/attendance", async (req, res) => {
   try {
     const data = await attendance.find();
@@ -536,7 +541,14 @@ app.get("/attendance", async (req, res) => {
   }
 });
 
+app.delete("/viewattendance/:id", async (req, res) => {
+  console.log(req.params.id);
+  let result = await attendance.deleteOne({
+    _id: new mongodb.ObjectId(req.params.id),
+  });
 
+  res.send(result);
+});
 
 const storage = multer({
   storage: multer.diskStorage({}),
@@ -557,7 +569,9 @@ const storage = multer({
 });
 
 app.post("/uploadVideo", storage.single("file"), (req, res) => {
+  console.log(req.body);
   const { salespersonId, title } = req.body;
+
   cloudinary.uploader.upload(
     req.file.path,
     {
@@ -589,9 +603,6 @@ app.post("/uploadVideo", storage.single("file"), (req, res) => {
   );
 });
 
-
-
-
 app.get("/getmedia", async (req, res) => {
   try {
     const media = await Media.find().lean();
@@ -603,14 +614,12 @@ app.get("/getmedia", async (req, res) => {
       );
       const { salespersonId, ...rest } = m;
       delete user.email;
-      delete user.password; 
-      delete user.updatedAt; 
-      delete user.createdAt; 
-      delete user.cloudinaryId; 
-      delete user.photo; 
-      delete user.phoneNo; 
-      delete user.address; 
-      delete user.lastName; 
+      delete user.password;
+      delete user.updatedAt;
+      delete user.createdAt;
+      delete user.phoneNo;
+      delete user.address;
+      delete user.lastName;
       return { ...rest, ...user };
     });
     res.json(mediaWithUsers);
@@ -619,6 +628,78 @@ app.get("/getmedia", async (req, res) => {
     res.status(400).json(error);
   }
 });
+
+
+app.put("/updatemedia/:id", storage.single("file"), async (req, res) => {
+  try {
+    const { salespersonId, title } = req.body;
+    const mediaId = req.params.id;
+
+    const media = await Media.findById(mediaId);
+    if (!media) {
+      return res.status(404).send("Media not found");
+    }
+
+    if (req.file) {
+      cloudinary.uploader.destroy(media.cloudinary_id);
+
+      cloudinary.uploader.upload(
+        req.file.path,
+        {
+          resource_type: "video",
+          folder: "video",
+        },
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).send(err);
+          }
+
+          media.name = req.file.originalname;
+          media.url = result.url;
+          media.cloudinary_id = result.public_id;
+          media.salespersonId = salespersonId;
+          media.title = title;
+
+          media.save((err, savedMedia) => {
+            if (err) {
+              console.log(err);
+              return res.status(500).send(err);
+            }
+            return res.status(200).send(savedMedia);
+          });
+        }
+      );
+    } else {
+      media.salespersonId = salespersonId;
+      media.title = title;
+
+      media.save((err, savedMedia) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).send(err);
+        }
+        return res.status(200).send(savedMedia);
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json(error);
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

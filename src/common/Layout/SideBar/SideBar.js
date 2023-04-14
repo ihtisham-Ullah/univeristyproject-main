@@ -19,11 +19,14 @@ import ListItemText from "@mui/material/ListItemText";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
-import AnalyticsIcon from "@mui/icons-material/Analytics";
+import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
+import AddTaskIcon from "@mui/icons-material/AddTask";
 import TaskIcon from "@mui/icons-material/Task";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import ManageTraining from "./../../../components/Auth/Training/ManageTraining";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -194,11 +197,15 @@ export default function MiniDrawer({ childprops }) {
           {[
             {
               name: "Create Task",
-              icon: <TaskIcon onClick={(e) => navigate(`/CreateTask`)} />,
+              icon: <AddTaskIcon onClick={(e) => navigate(`/CreateTask`)} />,
             },
             {
               name: "Assigned Tasks",
-              icon: <TaskIcon onClick={(e) => navigate(`/ViewTasks`)} />,
+              icon: (
+                <AssignmentTurnedInIcon
+                  onClick={(e) => navigate(`/ViewTasks`)}
+                />
+              ),
             },
             {
               name: "Completed Tasks",
@@ -208,7 +215,17 @@ export default function MiniDrawer({ childprops }) {
             },
             {
               name: "Training",
-              icon: <TaskIcon onClick={(e) => navigate(`/UploadVideo`)} />,
+              icon: (
+                <OndemandVideoIcon onClick={(e) => navigate(`/UploadVideo`)} />
+              ),
+            },
+            {
+              name: "Manage Training",
+              icon: (
+                <OndemandVideoIcon
+                  onClick={(e) => navigate(`/ManageTraining`)}
+                />
+              ),
             },
             {
               name: "Logout",

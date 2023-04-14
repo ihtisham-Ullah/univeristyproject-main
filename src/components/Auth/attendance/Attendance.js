@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 function Attendance() {
   const [rows, setRows] = useState([]);
   let navigate = useNavigate();
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("http://localhost:5000/viewattendance");
@@ -18,6 +19,11 @@ function Attendance() {
     navigate("/SalespersonAttendance", { state: { firstName } });
   };
 
+  // Filter the rows to remove duplicates
+  const uniqueRows = rows.filter((row, index, self) => {
+    return index === self.findIndex((r) => r.firstName === row.firstName);
+  });
+
   return (
     <div className="attendance-table-container">
       <table className="attendance-table">
@@ -29,7 +35,7 @@ function Attendance() {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, index) => (
+          {uniqueRows.map((row, index) => (
             <tr key={index}>
               <td>
                 <img src={row.photo} alt="User avatar" className="avatar" />

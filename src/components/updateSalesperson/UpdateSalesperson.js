@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./updateSalesperson.css";
 import Avatar from "react-avatar";
+import Swal from "sweetalert2";
 import axios from "axios";
 
 const UpdateSalesperson = () => {
@@ -74,7 +75,7 @@ const UpdateSalesperson = () => {
       console.log(data);
       navigate("/Salesperson");
     } catch (err) {
-      console.log(err.response.data.error);
+      Swal.fire(err.response.data.error, "", "error");
     } finally {
       setIsLoading(false);
     }

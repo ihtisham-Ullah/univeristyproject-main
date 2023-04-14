@@ -9,6 +9,7 @@ import Attendance from "components/Auth/attendance/Attendance";
 import ViewTasksFeedback from "../components/ManageTask/ViewTasks/ViewTasksfeedback";
 import SalespersonAttendance from "../components/Auth/attendance/SalespersonAttendance";
 import UploadVideo from "components/Auth/Training/UploadVideo";
+import ManageTraining from "components/Auth/Training/ManageTraining";
 export const allPrivateAppRoutes = [
   {
     path: "/Register",
@@ -49,5 +50,9 @@ export const allPrivateAppRoutes = [
   {
     path: "/UploadVideo",
     component: <UploadVideo />,
+  },
+  {
+    path: "/ManageTraining",
+    component: <ManageTraining />,
   },
 ];

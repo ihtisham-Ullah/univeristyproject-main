@@ -18,6 +18,7 @@ import ViewTasksfeedback from "components/ManageTask/ViewTasks/ViewTasksfeedback
 import ProtectedRoutes from "./components/protective/ProtectiveRoutes";
 import SalespersonAttendance from "./components/Auth/attendance/SalespersonAttendance";
 import UploadVideo from "components/Auth/Training/UploadVideo";
+import ManageTraining from "components/Auth/Training/ManageTraining";
 
 const App = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
           <Route path="/ViewTasksFeedback" element={<ViewTasksfeedback />} />
           <Route path="/UpdateTasks/:id" element={<UpdateedTask2 />} />
           <Route path="/UploadVideo" element={<UploadVideo />} />
+          <Route path="/ManageTraining" element={<ManageTraining />} />
         </Route>
         <Route path="/" element={<LoginPage />} />
         <Route path="/Reset" element={<Reset />} />
