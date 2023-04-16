@@ -688,7 +688,6 @@ export default function RegisterSalesperson() {
                   fullWidth
                   id="address"
                   label="Address"
-                  autoFocus
                   value={address}
                   onChange={(event) => setAddress(event.target.value)}
                   sx={{

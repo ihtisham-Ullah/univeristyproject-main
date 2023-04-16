@@ -7,9 +7,11 @@ import { Dashboard } from "../components/Auth/dashboard/Dashboard";
 import Notification from "../components/notification/Notification";
 import Attendance from "components/Auth/attendance/Attendance";
 import ViewTasksFeedback from "../components/ManageTask/ViewTasks/ViewTasksfeedback";
+import ViewAllTasks from "components/ManageTask/ViewTasks/ViewAllTasks";
 import SalespersonAttendance from "../components/Auth/attendance/SalespersonAttendance";
 import UploadVideo from "components/Auth/Training/UploadVideo";
 import ManageTraining from "components/Auth/Training/ManageTraining";
+import Complain from "components/Complain/Complain";
 export const allPrivateAppRoutes = [
   {
     path: "/Register",
@@ -44,6 +46,10 @@ export const allPrivateAppRoutes = [
     component: <ViewTasksFeedback />,
   },
   {
+    path: "/ViewAllTasks",
+    component: <ViewAllTasks />,
+  },
+  {
     path: "/SalespersonAttendance",
     component: <SalespersonAttendance />,
   },
@@ -54,5 +60,9 @@ export const allPrivateAppRoutes = [
   {
     path: "/ManageTraining",
     component: <ManageTraining />,
+  },
+  {
+    path: "/Complain",
+    component: <Complain />,
   },
 ];

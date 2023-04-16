@@ -26,6 +26,7 @@ import AddTaskIcon from "@mui/icons-material/AddTask";
 import TaskIcon from "@mui/icons-material/Task";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
+import ChatIcon from '@mui/icons-material/Chat';
 import ManageTraining from "./../../../components/Auth/Training/ManageTraining";
 const drawerWidth = 240;
 
@@ -210,7 +211,8 @@ export default function MiniDrawer({ childprops }) {
             {
               name: "Completed Tasks",
               icon: (
-                <TaskIcon onClick={(e) => navigate(`/ViewTasksFeedback`)} />
+                
+                <TaskIcon onClick={(e) => navigate(`/ViewAllTasks`)} />
               ),
             },
             {
@@ -224,6 +226,15 @@ export default function MiniDrawer({ childprops }) {
               icon: (
                 <OndemandVideoIcon
                   onClick={(e) => navigate(`/ManageTraining`)}
+                />
+              ),
+            },
+
+            {
+              name: "Complaints",
+              icon: (
+                <ChatIcon
+                  onClick={(e) => navigate(`/Complain`)}
                 />
               ),
             },

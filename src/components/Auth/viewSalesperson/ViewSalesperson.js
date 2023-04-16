@@ -28,7 +28,7 @@ function ViewSalesperson() {
   }, []);
 
   function deleteSalesperson(id) {
-    fetch(`http://localhost:5000/${id}`, {
+    fetch(`http://localhost:5000/delete/${id}`, {
       method: "DELETE",
       crossDomain: true,
     }).then((result) => {

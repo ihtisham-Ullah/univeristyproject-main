@@ -19,12 +19,16 @@ function Attendance() {
     navigate("/SalespersonAttendance", { state: { firstName } });
   };
 
-  // Filter the rows to remove duplicates
+  
   const uniqueRows = rows.filter((row, index, self) => {
     return index === self.findIndex((r) => r.firstName === row.firstName);
   });
 
   return (
+    <>
+    <h3 className="text-center mb-4" style={{ marginTop: "5rem" }}>
+       Attendance
+      </h3>
     <div className="attendance-table-container">
       <table className="attendance-table">
         <thead>
@@ -51,6 +55,7 @@ function Attendance() {
         </tbody>
       </table>
     </div>
+    </>
   );
 }
 

@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { FaUser, FaEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
-import { Table, Spinner, Button } from "react-bootstrap";
-import { FaEdit, FaTrash } from "react-icons/fa";
-import * as XLSX from "xlsx";
+import { Table, Image, Button } from "react-bootstrap";
 
 function ViewTasks() {
-  const [list, setList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [tasks, setTasks] = useState([]);
 
   const getTasks = async () => {
     try {
-      setIsLoading(true);
       const response = await fetch("http://localhost:5000/getTasks", {
         method: "GET",
         crossDomain: true,
@@ -22,17 +18,24 @@ function ViewTasks() {
         },
       });
       const data = await response.json();
-      setList(data);
-      setIsLoading(false);
+      setTasks(data);
     } catch (error) {
       console.log("error", error);
-      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     getTasks();
   }, []);
+
+  const groupBy = (array, key) => {
+    return array.reduce((result, currentValue) => {
+      (result[currentValue[key]] = result[currentValue[key]] || []).push(
+        currentValue
+      );
+      return result;
+    }, {});
+  };
 
   function deleteTasks(id) {
     if (window.confirm("Are you sure you want to delete this item?")) {
@@ -60,115 +63,217 @@ function ViewTasks() {
         return "secondary";
     }
   };
-  const exportToExcel = () => {
-    const fileType =
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-    const fileExtension = ".xlsx";
-    const fileName = "tasks_data";
-    const filteredList = list.map(
-      ({
-        taskDescription,
-        taskType,
-        targetLocation,
-        taskPriority,
-        startDate,
-        endDate,
-        taskName,
-      }) => ({
-        taskName,
-        taskDescription,
-        taskType,
-        taskPriority,
-        targetLocation,
-        startDate,
-        endDate,
-      })
-    );
-    console.log(filteredList);
-    const ws = XLSX.utils.json_to_sheet(filteredList);
-    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
-    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelBuffer], { type: fileType });
-    const url = window.URL.createObjectURL(data);
-    const downloadLink = document.createElement("a");
-    downloadLink.href = url;
-    downloadLink.download = fileName + fileExtension;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-  };
+
+  const tasksBySalesperson = groupBy(tasks, "firstName");
 
   return (
-    <div style={{ marginTop: "7rem" }}>
-      <h1 className="text-center mb-4">Assigned Tasks</h1>
-
-      <Button
-        variant="primary"
-        onClick={() => exportToExcel()}
-        style={{ marginLeft: "75px" }}
+    <div className="container py-5">
+      <h2
+        className="text-center mb-5"
+        style={{
+          fontFamily: "Arial",
+          fontWeight: "bold",
+          fontSize: "32px",
+          marginTop: "5rem",
+        }}
       >
-        Export to Excel
-      </Button>
-      {isLoading ? (
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      ) : (
-        <Table
-          striped
-          bordered
-          hover
-          responsive
-          style={{ marginLeft: "4.5rem" }}
-        >
-          <thead>
-            <tr>
-              <th>Task Name</th>
-              <th>Description</th>
-              <th>Type</th>
-              <th>Priority</th>
-
-              <th>Location</th>
-              <th>End Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {list?.map((d, i) => (
-              <tr key={d._id}>
-                <td>{d.taskName}</td>
-                <td>{d.taskDescription}</td>
-                <td>{d.taskType}</td>
-                <td>
-                  <span className={`badge bg-${getBadgeColor(d.taskPriority)}`}>
-                    {d.taskPriority}
-                  </span>
-                </td>
-
-                <td>{d.targetLocation}</td>
-                <td>{new Date(d.endDate).toLocaleDateString()}</td>
-                <td>
-                  <Link
-                    style={{ marginLeft: "0px", marginBottom: "1rem" }}
-                    to={`/updateTasks/${d._id}`}
-                    // className="btn btn-primary btn-sm"
-                  >
-                    <FaEdit /> Edit
-                  </Link>
-
-                  <Button
-                    variant="danger"
-                    onClick={() => deleteTasks(d._id)}
-                    style={{ marginTop: "6px" }}
-                  >
-                    <FaTrash /> Delete
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      )}
+        Assigned Tasks
+      </h2>
+      {Object.entries(tasksBySalesperson).map(([salesperson, tasks]) => (
+        <div key={salesperson}>
+          <hr className="my-4" />
+          <div className="row align-items-center">
+            {tasks[0].firstName === salesperson && (
+              <div className="col-12 col-md-2 text-center d-flex flex-column align-items-center">
+                <img
+                  src={tasks[0].photo}
+                  alt={tasks[0].firstName}
+                  className="rounded-circle img-fluid mb-3"
+                  style={{ maxWidth: "100px", marginLeft: "60rem" }}
+                />
+                <h3
+                  className="fw-bold"
+                  style={{
+                    fontFamily: "Verdana",
+                    fontSize: "24px",
+                    marginLeft: "60rem",
+                  }}
+                >
+                  {salesperson} Tasks
+                </h3>
+              </div>
+            )}
+            <div className="col-md-11">
+              <div className="table-responsive w-100">
+                <table className="table table-striped table-hover">
+                  <thead className="nowrap">
+                    <tr>
+                      <th
+                        scope="col"
+                        style={{
+                          fontFamily: "Arial",
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          color: "#555555",
+                        }}
+                      >
+                        Task Name
+                      </th>
+                      <th
+                        scope="col"
+                        style={{
+                          fontFamily: "Arial",
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          color: "#555555",
+                        }}
+                      >
+                        Task Type
+                      </th>
+                      <th
+                        scope="col"
+                        style={{
+                          fontFamily: "Arial",
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          color: "#555555",
+                        }}
+                      >
+                        Task Priority
+                      </th>
+                      <th
+                        scope="col"
+                        style={{
+                          fontFamily: "Arial",
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          color: "#555555",
+                        }}
+                      >
+                        Start Date
+                      </th>
+                      <th
+                        scope="col"
+                        style={{
+                          fontFamily: "Arial",
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          color: "#555555",
+                        }}
+                      >
+                        End Date
+                      </th>
+                      <th
+                        scope="col"
+                        style={{
+                          fontFamily: "Arial",
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          color: "#555555",
+                        }}
+                      >
+                        Target Location
+                      </th>
+                      <th
+                        scope="col"
+                        style={{
+                          fontFamily: "Arial",
+                          fontSize: "18px",
+                          fontWeight: "bold",
+                          color: "#555555",
+                        }}
+                      >
+                        Task Description
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tasks.map((task) => (
+                      <tr key={task.taskName}>
+                        <td
+                          className="px-4"
+                          style={{ fontFamily: "Verdana", fontSize: "16px" }}
+                        >
+                          {task.taskName}
+                        </td>
+                        <td
+                          className="px-4"
+                          style={{ fontFamily: "Verdana", fontSize: "16px" }}
+                        >
+                          {task.taskType}
+                        </td>
+                        <td
+                          className="px-4"
+                          style={{ fontFamily: "Verdana", fontSize: "16px" }}
+                        >
+                          <span
+                            className={`badge bg-${getBadgeColor(
+                              task.taskPriority
+                            )}`}
+                            style={{
+                              fontFamily: "Verdana",
+                              fontSize: "14px",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {task.taskPriority}
+                          </span>
+                        </td>
+                        <td
+                          className="px-4"
+                          style={{ fontFamily: "Verdana", fontSize: "16px" }}
+                        >
+                          {task.startDate}
+                        </td>
+                        <td
+                          className="px-4"
+                          style={{ fontFamily: "Verdana", fontSize: "16px" }}
+                        >
+                          {task.endDate}
+                        </td>
+                        <td
+                          className="px-4"
+                          style={{ fontFamily: "Verdana", fontSize: "16px" }}
+                        >
+                          {task.targetLocation}
+                        </td>
+                        <td
+                          className="px-4"
+                          style={{ fontFamily: "Verdana", fontSize: "16px" }}
+                        >
+                          {task.taskDescription}
+                        </td>
+                        <td>
+                          <Link
+                            // style={{ marginLeft: "0px", marginBottom: "1rem" }}
+                            to={`/updateTasks/${task.taskId}`}
+                          >
+                            <FaEdit /> Edit
+                          </Link>
+                        </td>
+                        <td>
+                          <Button
+                            variant="danger"
+                            onClick={() => deleteTasks(task.taskId)}
+                          >
+                            Delete
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="table-slider">
+                <div className="slider-wrapper">
+                  <div className="slider"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+      <hr className="my-4" />
     </div>
   );
 }

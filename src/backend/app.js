@@ -52,6 +52,7 @@ require("./Task/CreateTask");
 require("./Task/TaskDetail");
 require("./attendance/viewAttendance");
 require("./Media/Media");
+require("./Complain/Complain");
 
 const User = mongoose.model("Userinfo");
 const priority = mongoose.model("TaskPriority");
@@ -60,6 +61,7 @@ const createTask = mongoose.model("CreateTask");
 const getTasksFeedback = mongoose.model("TaskDetail");
 const attendance = mongoose.model("clockins");
 const Media = mongoose.model("Media");
+const Complain = mongoose.model("complaint");
 
 cloudinary.config({
   cloud_name: "dm8mvmjp2",
@@ -68,7 +70,7 @@ cloudinary.config({
   secure: true,
 });
 
-// multer configuration
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -197,11 +199,15 @@ app.get("/getsalesperson", async (req, res) => {
   }
 });
 
-app.delete("/:id", async (req, res) => {
+app.delete("/delete/:id", async (req, res) => {
   console.log(req.params.id);
-  let result = await User.deleteOne({
-    _id: new mongodb.ObjectId(req.params.id),
-  });
+  const id = new mongodb.ObjectId(req.params.id);
+
+  let result = await User.deleteOne({ _id: id });
+
+  await Media.deleteMany({ salespersonId: id });
+
+  await attendance.deleteMany({ userId: id });
 
   res.send(result);
 });
@@ -396,23 +402,54 @@ app.post("/createTask", async (req, res) => {
 app.get("/getTasks", async (req, res) => {
   try {
     const data = await createTask.find();
+    const updatedData = [];
 
-    console.log(data);
-    res.send(data);
+    for (let i = 0; i < data.length; i++) {
+      const taskId = data[i]._id;
+      const salespersonId = data[i].salespersonId;
+      const user = await User.findOne({ _id: salespersonId }).select("-password -email -lastName -address -phoneNo");
+
+      if (user) {
+        const mergedData = { ...data[i]._doc, ...user._doc };
+        updatedData.push({ ...mergedData, taskId });
+      } else {
+        updatedData.push({ ...data[i]._doc, taskId });
+      }
+    }
+
+    console.log(updatedData);
+    res.send(updatedData);
   } catch (error) {
     res.send({ status: "Error" });
   }
 });
+
+
+
+
+
+
 
 app.get("/getTasksFeedback", async (req, res) => {
   try {
-    const data = await getTasksFeedback.find();
-    console.log(data);
-    res.send(data);
+    const taskFeedback = await getTasksFeedback.find().lean();
+    console.log(taskFeedback);
+    const salespersonIds = taskFeedback.map((m) => m.userId);
+    const users = await User.find({ _id: { $in: salespersonIds } }).lean();
+    const feedbackWithUsers = taskFeedback.map((m) => {
+      const user = users.find((u) => u._id.toString() === m.userId.toString());
+      const { userId, ...rest } = m;
+      const feedbackId = m._id;
+
+      return { feedbackId, ...rest, ...user };
+    });
+    res.json(feedbackWithUsers);
   } catch (error) {
-    res.send({ status: "Error" });
+    console.log(error);
+    res.status(400).json(error);
   }
 });
+
 app.delete("/getTasksFeedback/:id", async (req, res) => {
   console.log(req.params.id);
   let result = await getTasksFeedback.deleteOne({
@@ -613,6 +650,7 @@ app.get("/getmedia", async (req, res) => {
         (u) => u._id.toString() === m.salespersonId.toString()
       );
       const { salespersonId, ...rest } = m;
+      const mediaId = m._id;
       delete user.email;
       delete user.password;
       delete user.updatedAt;
@@ -620,7 +658,7 @@ app.get("/getmedia", async (req, res) => {
       delete user.phoneNo;
       delete user.address;
       delete user.lastName;
-      return { ...rest, ...user };
+      return { mediaId, ...rest, ...user };
     });
     res.json(mediaWithUsers);
   } catch (error) {
@@ -629,6 +667,14 @@ app.get("/getmedia", async (req, res) => {
   }
 });
 
+app.delete("/getmedia/:id", async (req, res) => {
+  console.log(req.params.id);
+  let result = await Media.deleteOne({
+    _id: new mongodb.ObjectId(req.params.id),
+  });
+
+  res.send(result);
+});
 
 app.put("/updatemedia/:id", storage.single("file"), async (req, res) => {
   try {
@@ -688,21 +734,39 @@ app.put("/updatemedia/:id", storage.single("file"), async (req, res) => {
   }
 });
 
+app.get("/getComplain", async (req, res) => {
+  try {
+    const data = await Complain.find();
+    const updatedData = [];
 
+    for (let i = 0; i < data.length; i++) {
+      const complainId = data[i]._id;
+      const userId = data[i].userId;
+      const user = await User.findOne({ _id: userId }).select("-password -email -lastName -address -phoneNo");
 
+      if (user) {
+        const mergedData = { ...data[i]._doc, ...user._doc };
+        updatedData.push({ ...mergedData, complainId });
+      } else {
+        updatedData.push({ ...data[i]._doc, complainId });
+      }
+    }
 
+    console.log(updatedData);
+    res.send(updatedData);
+  } catch (error) {
+    res.send({ status: "Error" });
+  }
+});
 
+app.delete("/getComplain/:id", async (req, res) => {
+  console.log(req.params.id);
+  let result = await Complain.deleteOne({
+    _id: new mongodb.ObjectId(req.params.id),
+  });
 
-
-
-
-
-
-
-
-
-
-
+  res.send(result);
+});
 
 app.listen(5000, () => {
   console.log("server started");
