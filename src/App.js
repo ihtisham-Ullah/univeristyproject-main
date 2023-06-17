@@ -21,6 +21,7 @@ import SalespersonAttendance from "./components/Auth/attendance/SalespersonAtten
 import UploadVideo from "components/Auth/Training/UploadVideo";
 import ManageTraining from "components/Auth/Training/ManageTraining";
 import Complain from "components/Complain/Complain";
+import Dashboard from "components/Dashboard/Dashboard";
 
 const App = () => {
   return (
@@ -50,6 +51,7 @@ const App = () => {
           <Route path="/UploadVideo" element={<UploadVideo />} />
           <Route path="/ManageTraining" element={<ManageTraining />} />
           <Route path="/Complain" element={<Complain />} />
+          <Route path="/Dashboard" element={<Dashboard />} />
         </Route>
         <Route path="/" element={<LoginPage />} />
         <Route path="/Reset" element={<Reset />} />

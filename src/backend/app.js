@@ -70,7 +70,6 @@ cloudinary.config({
   secure: true,
 });
 
-
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
@@ -204,10 +203,6 @@ app.delete("/delete/:id", async (req, res) => {
   const id = new mongodb.ObjectId(req.params.id);
 
   let result = await User.deleteOne({ _id: id });
-
-  await Media.deleteMany({ salespersonId: id });
-
-  await attendance.deleteMany({ userId: id });
 
   res.send(result);
 });
@@ -407,7 +402,9 @@ app.get("/getTasks", async (req, res) => {
     for (let i = 0; i < data.length; i++) {
       const taskId = data[i]._id;
       const salespersonId = data[i].salespersonId;
-      const user = await User.findOne({ _id: salespersonId }).select("-password -email -lastName -address -phoneNo");
+      const user = await User.findOne({ _id: salespersonId }).select(
+        "-password -email -lastName -address -phoneNo"
+      );
 
       if (user) {
         const mergedData = { ...data[i]._doc, ...user._doc };
@@ -423,12 +420,6 @@ app.get("/getTasks", async (req, res) => {
     res.send({ status: "Error" });
   }
 });
-
-
-
-
-
-
 
 app.get("/getTasksFeedback", async (req, res) => {
   try {
@@ -651,13 +642,7 @@ app.get("/getmedia", async (req, res) => {
       );
       const { salespersonId, ...rest } = m;
       const mediaId = m._id;
-      delete user.email;
-      delete user.password;
-      delete user.updatedAt;
-      delete user.createdAt;
-      delete user.phoneNo;
-      delete user.address;
-      delete user.lastName;
+     
       return { mediaId, ...rest, ...user };
     });
     res.json(mediaWithUsers);
@@ -742,7 +727,9 @@ app.get("/getComplain", async (req, res) => {
     for (let i = 0; i < data.length; i++) {
       const complainId = data[i]._id;
       const userId = data[i].userId;
-      const user = await User.findOne({ _id: userId }).select("-password -email -lastName -address -phoneNo");
+      const user = await User.findOne({ _id: userId }).select(
+        "-password -email -lastName -address -phoneNo"
+      );
 
       if (user) {
         const mergedData = { ...data[i]._doc, ...user._doc };

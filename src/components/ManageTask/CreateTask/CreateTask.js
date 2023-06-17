@@ -32,6 +32,11 @@ function CreateTask() {
   const [Loader, setLoadder] = useState(false);
   const [submitformLoader, setSubmitformLoader] = useState(false);
   const [state, setState] = useState({ address: "" });
+  const [targetLocation, setTargetLocation] = useState({
+    location: "",
+    lat: "",
+    long: "",
+  });
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -41,6 +46,13 @@ function CreateTask() {
   const updateTasks = async () => {
     let { data } = await axios.get(`http://localhost:5000/getTasks/${id}`);
     setSingleDataFetch(data);
+
+    // Set the initial value of targetLocation when loading the data
+    setTargetLocation({
+      location: data?.targetLocation?.location || "", // Update the location value
+      lat: data?.targetLocation?.lat || "",
+      long: data?.targetLocation?.long || "",
+    });
   };
 
   useEffect(() => {
@@ -72,7 +84,7 @@ function CreateTask() {
         handleUpdateTask(data);
         return;
       }
-      
+
       let getSalesperson = await axios.get(
         "http://localhost:5000/getsalesperson"
       );
@@ -89,8 +101,13 @@ function CreateTask() {
         },
         body: JSON.stringify({
           ...data,
+          targetLocation: {
+            location: targetLocation.location,
+            lat: targetLocation.lat,
+            long: targetLocation.long,
+          },
           firstName: firstName,
-        }), 
+        }),
       })
         .then((res) => res.json())
         .then((data) => {
@@ -107,12 +124,16 @@ function CreateTask() {
   };
 
   let handleUpdateTask = async (Data) => {
-    // e.preventDefault();
     let result = await fetch(`http://localhost:5000/updateTasks/${id}`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({
         ...Data,
+        targetLocation: {
+          location: targetLocation.location,
+          lat: targetLocation.lat,
+          long: targetLocation.long,
+        },
       }),
       headers: {
         "content-type": "application/json",
@@ -147,16 +168,25 @@ function CreateTask() {
     );
   };
 
-  const handleLocationSelect = (address) => {
-    setState({ address });
-
-    geocodeByAddress(address)
-      .then((results) => getLatLng(results[0]))
-      .then((latLng) => console.log("Success", latLng))
-      .catch((error) => console.error("Error", error));
+  const handleLocationSelect = async (address) => {
+    try {
+      const results = await geocodeByAddress(address);
+      const latLng = await getLatLng(results[0]);
+      setTargetLocation({
+        location: address,
+        lat: latLng.lat,
+        long: latLng.lng,
+      });
+    } catch (error) {
+      console.error("Error selecting location:", error);
+    }
   };
+
   const handleChangeLocation = (address) => {
-    setState({ address });
+    setTargetLocation({
+      ...targetLocation,
+      location: address,
+    });
   };
 
   return (
@@ -173,10 +203,14 @@ function CreateTask() {
           <Formik
             initialValues={
               id
-                ? singleDateFetch
+                ? {
+                    ...singleDateFetch,
+                    targetLocation:
+                      singleDateFetch?.targetLocation?.location || "",
+                  }
                 : {
                     taskName: "",
-                    targetLocation: "",
+                    targetLocation: targetLocation.location,
                     taskDescription: "",
                     startDate: "",
                     endDate: "",
@@ -346,6 +380,9 @@ function CreateTask() {
                       InputLabelProps={{
                         shrink: true,
                       }}
+                      inputProps={{
+                        min: new Date().toISOString().split("T")[0], // set min to the current date
+                      }}
                       error={
                         touched["startDate"] && Boolean(errors["startDate"])
                       }
@@ -364,6 +401,9 @@ function CreateTask() {
                       InputLabelProps={{
                         shrink: true,
                       }}
+                      inputProps={{
+                        min: new Date().toISOString().split("T")[0], // set min to the current date
+                      }}
                       error={touched["endDate"] && Boolean(errors["endDate"])}
                     />
                     {requiredErrorShow("endDate", touched, errors)}
@@ -371,21 +411,15 @@ function CreateTask() {
 
                   <div className="col-sm-6 col-md-4 form-group mb-3">
                     <PlacesAutocomplete
-                      // value={state.address}
-                      value={values.targetLocation || ""}
-                      onChange={(evt) => {
-                        handleChangeLocation(evt);
-                        if (!evt) {
-                          setFieldValue("targetLocation", "");
-                        } else {
-                          setFieldValue("targetLocation", evt);
-                        }
-                        console.log("evt", evt);
+                      value={values.targetLocation}
+                      onChange={(address) => {
+                        handleChangeLocation(address);
+                        setFieldValue("targetLocation", address);
+                        handleChange("targetLocation")(address);
                       }}
-                      onSelect={(evnt) => {
-                        handleLocationSelect(evnt);
-                        console.log(">>>>>", evnt);
-                        setFieldValue("targetLocation", evnt);
+                      onSelect={(address) => {
+                        setFieldValue("targetLocation", address); // Update the form field value
+                        handleLocationSelect(address);
                       }}
                     >
                       {({
@@ -400,18 +434,14 @@ function CreateTask() {
                             id="targetLocation"
                             name="targetLocation"
                             label="Target Location"
-                            value={values.targetLocation || ""}
-                            onChange={(evnt) => {
-                              console.log(":da", evnt.target.value);
-                              setFieldValue("targetLocation", state.address);
-                            }}
+                            value={values.targetLocation}
+                            onChange={handleChange("targetLocation")}
                             error={
-                              touched["targetLocation"] &&
-                              Boolean(errors["targetLocation"])
+                              touched.targetLocation &&
+                              Boolean(errors.targetLocation)
                             }
                             helperText={
-                              touched["targetLocation"] &&
-                              errors["targetLocation"]
+                              touched.targetLocation && errors.targetLocation
                             }
                             InputLabelProps={{
                               shrink: true,
@@ -427,7 +457,6 @@ function CreateTask() {
                               const className = suggestion.active
                                 ? "suggestion-item--active"
                                 : "suggestion-item";
-                              // inline style for demonstration purpose
                               const style = suggestion.active
                                 ? {
                                     backgroundColor: "#fafafa",
@@ -443,6 +472,7 @@ function CreateTask() {
                                     className,
                                     style,
                                   })}
+                                  key={suggestion.placeId}
                                 >
                                   <span>{suggestion.description}</span>
                                 </div>

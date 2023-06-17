@@ -3,13 +3,18 @@ import { useNavigate, Link } from "react-router-dom";
 
 function ViewAllTasks() {
   const [rows, setRows] = useState([]);
+  const [error, setError] = useState(null);
   let navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("http://localhost:5000/getTasksFeedback");
-      const data = await response.json();
-      setRows(data);
+      try {
+        const response = await fetch("http://localhost:5000/getTasksFeedback");
+        const data = await response.json();
+        setRows(data);
+      } catch (error) {
+        setError(error);
+      }
     };
     fetchData();
   }, []);
@@ -18,6 +23,10 @@ function ViewAllTasks() {
     navigate("/ViewTasksfeedback", { state: { firstName } });
   };
 
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
   const uniqueRows = rows.filter((row, index, self) => {
     return index === self.findIndex((r) => r.firstName === row.firstName);
   });
@@ -25,7 +34,7 @@ function ViewAllTasks() {
   return (
     <>
       <h3 className="text-center mb-4" style={{ marginTop: "5rem" }}>
-       All Completed Tasks
+        All Completed Tasks
       </h3>
 
       <div className="attendance-table-container">

@@ -46,7 +46,7 @@ function Login() {
           if (data.status === "ok") {
             localStorage.setItem("user", state.email);
             Swal.fire("Login Successfully!", "", "success");
-            navigate("/Register");
+            navigate("/Dashboard");
           }
         })
         .catch((error) => {

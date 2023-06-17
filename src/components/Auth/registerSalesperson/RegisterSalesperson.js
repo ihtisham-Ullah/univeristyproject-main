@@ -544,32 +544,7 @@ export default function RegisterSalesperson() {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-              {/* <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                  value={firstName}
-                  onChange={(event) => setFirstName(event.target.value)}
-                  sx={{
-                    borderColor: errors.firstName ? "red" : "",
-                  }}
-                  error={errors.firstName ? true : false}
-                  helperText={errors.firstName}
-                  onBlur={() => {
-                    if (firstName) {
-                      setErrors((prevState) => ({
-                        ...prevState,
-                        firstName: "",
-                      }));
-                    }
-                  }}
-                />
-              </Grid> */}
+          
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"

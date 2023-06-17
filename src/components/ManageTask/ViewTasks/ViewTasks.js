@@ -235,7 +235,7 @@ function ViewTasks() {
                           className="px-4"
                           style={{ fontFamily: "Verdana", fontSize: "16px" }}
                         >
-                          {task.targetLocation}
+                         {task.targetLocation?.location}
                         </td>
                         <td
                           className="px-4"

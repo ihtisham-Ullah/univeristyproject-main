@@ -163,10 +163,10 @@ export default function MiniDrawer({ childprops }) {
                 />
               ),
             },
-            {
-              name: "Leaves",
-              icon: <FactCheckIcon onClick={(e) => navigate(`/leaves`)} />,
-            },
+            // {
+            //   name: "Leaves",
+            //   icon: <FactCheckIcon onClick={(e) => navigate(`/leaves`)} />,
+            // },
           ].map((text, index) => (
             <ListItem key={text.name} disablePadding sx={{ display: "block" }}>
               <ListItemButton
