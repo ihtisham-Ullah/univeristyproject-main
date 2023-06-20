@@ -374,6 +374,7 @@ app.post("/createTask", async (req, res) => {
     targetLocation,
     salespersonId,
     firstName,
+    taskStatus,
   } = req.body;
 
   try {
@@ -387,6 +388,7 @@ app.post("/createTask", async (req, res) => {
       targetLocation,
       salespersonId,
       firstName,
+      taskStatus,
     });
     res.send({ status: "ok" });
   } catch (error) {

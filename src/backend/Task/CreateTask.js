@@ -55,6 +55,7 @@ const createTaskSchema = new mongoose.Schema(
     targetLocation: targetLocationSchema,
     salespersonId: String,
     firstName: String,
+    taskStatus: String,
   },
   {
     collection: "CreateTask",
@@ -76,6 +77,7 @@ function validateTask(task) {
     }).required(),
     salespersonId: Joi.string().min(0).max(200).required(),
     firstName: Joi.string().min(1).max(200).required(),
+    taskStatus: Joi.string().required(),
   });
 
   return schema.validate(task);

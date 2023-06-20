@@ -28,6 +28,8 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import ChatIcon from '@mui/icons-material/Chat';
 import ManageTraining from "./../../../components/Auth/Training/ManageTraining";
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import { Dashboard } from "@mui/icons-material";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -143,6 +145,10 @@ export default function MiniDrawer({ childprops }) {
         <Divider />
         <List>
           {[
+            {
+              name: "Dashboard",
+              icon: <Dashboard onClick={(e) => navigate(`/Dashboard`)} />,
+            },
             {
               name: "Register salesperson",
               icon: <PersonAddIcon onClick={(e) => navigate(`/register`)} />,

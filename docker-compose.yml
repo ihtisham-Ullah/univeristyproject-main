@@ -1,0 +1,43 @@
+version: "3.7"
+
+services:
+  server:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    image: backend
+    container_name: backend
+    command: npm start
+    volumes:
+      - ./server/:/usr/src/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  client:
+    build:
+      dockerfile: Dockerfile
+    image: frontend
+    container_name: frontend
+    command: npm start
+    volumes:
+      - ./client/:/usr/src/app
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo
+    container_name: myapp-mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

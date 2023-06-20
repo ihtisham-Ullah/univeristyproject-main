@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Card, Button, Container, Row, Col, Spinner } from "react-bootstrap";
+import * as XLSX from "xlsx";
 import { useLocation } from "react-router-dom";
 
 function ViewTasksfeedback() {
   const [list, setList] = useState([]);
   const [userPhoto, setUserPhoto] = useState("");
-  const [showImage, setShowImage] = useState("");
-
+  const [showImageMap, setShowImageMap] = useState({});
+  const [showImage, setShowImage] = useState({});
   const [loading, setLoading] = useState(false);
 
   const location = useLocation();
@@ -50,11 +51,38 @@ function ViewTasksfeedback() {
         crossDomain: true,
       }).then(() => {
         getTasksFeedback();
+        setShowImage(prevState => {
+          const newState = { ...prevState };
+          delete newState[id];
+          return newState;
+        });
       });
     }
+    
   }
-
   const filteredList = list.filter((d) => d.firstName === firstName);
+
+  const exportToExcel = () => {
+    const formattedData = filteredList.map((d) => ({
+      TaskName: d.taskName,
+      TaskStatus: d.taskStatus,
+      CompletionDate: d.CompletedTask,
+      Feedback: d.feedback,
+      Location: d.CurrentLocation,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(formattedData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Tasks Feedback");
+    XLSX.writeFile(wb, "tasks_feedback.xlsx");
+  };
+
+  const handleShowImage = (id) => {
+    setShowImageMap((prevShowImageMap) => ({
+      ...prevShowImageMap,
+      [id]: !prevShowImageMap[id],
+    }));
+  };
 
   return (
     <>
@@ -71,12 +99,28 @@ function ViewTasksfeedback() {
             }}
           />
         }
-        <h2 className="salesperson-name">{firstName} </h2>
+        <h2 className="salesperson-name">{firstName}</h2>
       </div>
 
       <p className="h3" style={{ marginTop: "3rem", marginLeft: "35rem" }}>
-        Completed Tasks
+        Completed Tasks ({filteredList.length})
       </p>
+      <button
+        onClick={exportToExcel}
+        style={{
+          marginLeft: "80%",
+          marginTop: "2rem",
+          padding: "0.5rem 1rem",
+          background: "#f50057",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
+        Export to Excel
+      </button>
+
       <Container className="mt-5">
         {loading ? (
           <div className="d-flex justify-content-center">
@@ -89,10 +133,15 @@ function ViewTasksfeedback() {
                 <Card className="mb-3">
                   <Card.Header>{d.taskName}</Card.Header>
                   <Card.Body>
-                  <Button variant="primary" onClick={() => setShowImage(!showImage)}>
-            {showImage ? 'Hide Image' : 'Show Image'}
-          </Button>
-          {showImage && <Card.Img variant="top" src={d.image} />}
+                    <Button
+                      variant="primary"
+                      onClick={() => handleShowImage(d._id)}
+                    >
+                      {showImageMap[d._id] ? "Hide Image" : "Show Image"}
+                    </Button>
+                    {showImageMap[d._id] && (
+                      <Card.Img variant="top" src={d.image} />
+                    )}
                     <Card.Text>
                       <strong>Task Status:</strong> {d.taskStatus}
                     </Card.Text>

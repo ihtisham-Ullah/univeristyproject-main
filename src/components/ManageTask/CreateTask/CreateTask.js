@@ -107,6 +107,7 @@ function CreateTask() {
             long: targetLocation.long,
           },
           firstName: firstName,
+          taskStatus: "Pending",
         }),
       })
         .then((res) => res.json())
