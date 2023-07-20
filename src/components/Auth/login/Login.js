@@ -85,7 +85,7 @@ function Login() {
                         <input
                           type="email"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="e.g: admin@gmail.com"
                           id="email"
                           value={state.email}
                           onChange={handleChange}
@@ -108,7 +108,7 @@ function Login() {
                           type="password"
                           id="password"
                           className="form-control"
-                          placeholder="Enter password"
+                          placeholder="e.g: Enter1sx@#"
                           value={state.password}
                           onChange={handleChange}
                         />
