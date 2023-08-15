@@ -1,4 +1,4 @@
-#  Dockerfile for Node Express Backend
+# Dockerfile for Node Express Backend
 
 FROM node:16.17.0
 
@@ -9,12 +9,16 @@ WORKDIR /usr/src/app
 # Install Dependencies
 COPY package*.json ./
 
-RUN npm install --silent
+RUN npm install --production --silent
+
+# Install nodemon globally
+RUN npm install -g nodemon
 
 # Copy app source code
 COPY . .
 
-# Exports
+# Expose the port that your application is listening on
 EXPOSE 5000
 
-CMD ["npm","start"]
+# Start the application with nodemon
+CMD ["nodemon", "app.js"]

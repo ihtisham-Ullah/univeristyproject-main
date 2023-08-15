@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../../../../node_modules/font-awesome/css/font-awesome.min.css";
@@ -12,13 +12,40 @@ function Login() {
     password: "",
     isLoading: false,
   });
+
+  const [rememberMe, setRememberMe] = useState(false);
+  useEffect(() => {
+    const rememberMeValue = localStorage.getItem("rememberMe");
+    if (rememberMeValue !== null) {
+      setRememberMe(rememberMeValue === "true");
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("email");
+    const storedPassword = localStorage.getItem("password");
+    
+    if (storedEmail && storedPassword) {
+      setState({
+        email: storedEmail,
+        password: storedPassword,
+        isLoading: false,
+      });
+    }
+  }, []);
+  
   let navigate = useNavigate();
+
   const handleChange = (e) => {
     const { id, value } = e.target;
     setState((prevState) => ({
       ...prevState,
       [id]: value,
     }));
+  };
+
+  const handleRememberMeChange = () => {
+    setRememberMe(!rememberMe);
   };
 
   const sendDetailsToServer = () => {
@@ -35,6 +62,7 @@ function Login() {
         body: JSON.stringify({
           email: state.email,
           password: state.password,
+          rememberMe: rememberMe,
         }),
       })
         .then((res) => res.json())
@@ -45,12 +73,22 @@ function Login() {
           }
           if (data.status === "ok") {
             localStorage.setItem("user", state.email);
+            if (rememberMe) {
+              localStorage.setItem("email", state.email); // Store email
+              localStorage.setItem("password", state.password); // Store password
+              localStorage.setItem("rememberMe", "true");
+            } else {
+              localStorage.removeItem("email"); // Remove email
+              localStorage.removeItem("password"); // Remove password
+              localStorage.removeItem("rememberMe");
+            }
             Swal.fire("Login Successfully!", "", "success");
             navigate("/Dashboard");
           }
+          
         })
         .catch((error) => {
-          setState({ ...state, isLoading: false }); // Set isLoading state to false when an error occurs
+          setState({ ...state, isLoading: false });
           console.error("Error:", error);
         });
     } else {
@@ -58,6 +96,8 @@ function Login() {
       console.log("Please enter valid username and password");
     }
   };
+  
+
   const handleSubmitClick = (e) => {
     e.preventDefault();
     sendDetailsToServer();
@@ -118,15 +158,14 @@ function Login() {
                     <div className="col-sm-6">
                       <div className="form-check">
                         <input
-                          className="form-check-input"
                           type="checkbox"
-                          id="inlineFormCheck"
+                          className="form-check-input"
+                          id="rememberMe"
+                          checked={rememberMe}
+                          onChange={handleRememberMeChange}
                         />
-                        <label
-                          className="form-check-label"
-                          htmlFor="inlineFormCheck"
-                        >
-                          Remember me
+                        <label className="form-check-label" htmlFor="rememberMe">
+                          Remember Me
                         </label>
                       </div>
                     </div>

@@ -26,9 +26,9 @@ import AddTaskIcon from "@mui/icons-material/AddTask";
 import TaskIcon from "@mui/icons-material/Task";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
-import ChatIcon from '@mui/icons-material/Chat';
+import ChatIcon from "@mui/icons-material/Chat";
 import ManageTraining from "./../../../components/Auth/Training/ManageTraining";
-import DashboardIcon from '@mui/icons-material/Dashboard';
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Dashboard } from "@mui/icons-material";
 const drawerWidth = 240;
 
@@ -216,10 +216,7 @@ export default function MiniDrawer({ childprops }) {
             },
             {
               name: "Completed Tasks",
-              icon: (
-                
-                <TaskIcon onClick={(e) => navigate(`/ViewAllTasks`)} />
-              ),
+              icon: <TaskIcon onClick={(e) => navigate(`/ViewAllTasks`)} />,
             },
             {
               name: "Training",
@@ -238,18 +235,14 @@ export default function MiniDrawer({ childprops }) {
 
             {
               name: "Complaints",
-              icon: (
-                <ChatIcon
-                  onClick={(e) => navigate(`/Complain`)}
-                />
-              ),
+              icon: <ChatIcon onClick={(e) => navigate(`/Complain`)} />,
             },
             {
               name: "Logout",
               icon: (
                 <LogoutIcon
                   onClick={(e) => {
-                    localStorage.removeItem("user");
+                    
                     navigate(`/`);
                   }}
                 />
