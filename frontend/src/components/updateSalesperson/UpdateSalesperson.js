@@ -24,6 +24,7 @@ const UpdateSalesperson = () => {
 
   useEffect(() => {
     getSalesperson();
+    // eslint-disable-next-line 
   }, []);
 
   const getSalesperson = async () => {
@@ -46,7 +47,7 @@ const UpdateSalesperson = () => {
     console.warn(firstName, lastName, email, phoneNo, address, photo);
     const passwordRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+.[a-zA-Z]*$/;
-    const NoRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+    const NoRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
     if (!passwordRegex.test(email)) {
       setEmailError("Email is not valid");
       return;

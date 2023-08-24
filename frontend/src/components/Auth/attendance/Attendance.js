@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./attendance.css";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Attendance() {
   const [rows, setRows] = useState([]);

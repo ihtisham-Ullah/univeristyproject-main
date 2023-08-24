@@ -9,7 +9,7 @@ function UploadVideo() {
   const [salespersons, setSalespersons] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [mediaList, setMediaList] = useState([]);
+
 
   useEffect(() => {
     axios
@@ -21,16 +21,7 @@ function UploadVideo() {
         console.log(err);
       });
   }, []);
-  useEffect(() => {
-    axios
-      .get("https://workforce-web-backend.up.railway.app/getmedia")
-      .then((res) => {
-        setMediaList(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  
 
   useEffect(() => {
     if (title && salespersonId && file) {

@@ -41,6 +41,7 @@ function CreateTask() {
 
   useEffect(() => {
     updateTasks();
+    // eslint-disable-next-line 
   }, [id]);
 
   const updateTasks = async () => {

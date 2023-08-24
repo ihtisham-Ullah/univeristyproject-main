@@ -7,7 +7,7 @@ function ViewTasksfeedback() {
   const [list, setList] = useState([]);
   const [userPhoto, setUserPhoto] = useState("");
   const [showImageMap, setShowImageMap] = useState({});
-  const [showImage, setShowImage] = useState({});
+
   const [loading, setLoading] = useState(false);
 
   const location = useLocation();
@@ -42,6 +42,7 @@ function ViewTasksfeedback() {
 
   useEffect(() => {
     getTasksFeedback();
+    // eslint-disable-next-line 
   }, []);
 
   function deleteTasks(id) {
@@ -51,11 +52,11 @@ function ViewTasksfeedback() {
         crossDomain: true,
       }).then(() => {
         getTasksFeedback();
-        setShowImage(prevState => {
-          const newState = { ...prevState };
-          delete newState[id];
-          return newState;
-        });
+        // setShowImage(prevState => {
+        //   const newState = { ...prevState };
+        //   delete newState[id];
+        //   return newState;
+        // });
       });
     }
     

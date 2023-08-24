@@ -5,7 +5,7 @@ import Select from "react-select";
 import Swal from "sweetalert2";
 
 function Notification() {
-  const [message, setMessage] = useState("");
+
   const [salesperson, setSalesPerson] = useState([]);
   const [salespersonField, setSalesPersonField] = useState([]);
   const [type, setType] = useState();
@@ -56,7 +56,7 @@ function Notification() {
       description,
     };
     try {
-      const { data } = await axios.post(
+      await axios.post(
         "https://workforce-web-backend.up.railway.app/users/",
         formData,
         { headers: { "Content-Type": "application/json" } }
@@ -80,7 +80,7 @@ function Notification() {
             className="mb-3 mt-2"
             style={{ color: "green", marginLeft: "57px" }}
           >
-            <b>{message}</b>
+            
           </p>
           <div className="form-group mb-3">
             <Select

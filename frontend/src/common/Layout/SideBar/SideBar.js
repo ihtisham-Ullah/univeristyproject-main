@@ -18,7 +18,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import FactCheckIcon from "@mui/icons-material/FactCheck";
+
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
@@ -27,8 +27,7 @@ import TaskIcon from "@mui/icons-material/Task";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import ChatIcon from "@mui/icons-material/Chat";
-import ManageTraining from "./../../../components/Auth/Training/ManageTraining";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+
 import { Dashboard } from "@mui/icons-material";
 const drawerWidth = 240;
 
@@ -169,10 +168,7 @@ export default function MiniDrawer({ childprops }) {
                 />
               ),
             },
-            // {
-            //   name: "Leaves",
-            //   icon: <FactCheckIcon onClick={(e) => navigate(`/leaves`)} />,
-            // },
+           
           ].map((text, index) => (
             <ListItem key={text.name} disablePadding sx={{ display: "block" }}>
               <ListItemButton

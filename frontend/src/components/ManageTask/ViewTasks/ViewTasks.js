@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FaUser, FaEdit } from "react-icons/fa";
+import {  FaEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { Table, Image, Button } from "react-bootstrap";
+import {  Button } from "react-bootstrap";
 
 function ViewTasks() {
   const [tasks, setTasks] = useState([]);
@@ -42,6 +42,7 @@ function ViewTasks() {
       fetch(`https://workforce-web-backend.up.railway.app/getTasks/${id}`, {
         method: "DELETE",
         crossDomain: true,
+        
       })
         .then((result) => {
           result.json().then((resp) => {

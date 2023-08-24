@@ -54,6 +54,7 @@ function SalespersonAttendance() {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line 
   }, [selectedFirstName]);
 
   return (
