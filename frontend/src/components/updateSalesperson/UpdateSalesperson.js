@@ -9,7 +9,7 @@ import axios from "axios";
 
 const UpdateSalesperson = () => {
   const params = useParams();
-  const apiEndPoint = `http://localhost:5000/getsalesperson/${params.id}`;
+  const apiEndPoint = `https://workforce-web-backend.up.railway.app/getsalesperson/${params.id}`;
   let navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -65,7 +65,7 @@ const UpdateSalesperson = () => {
     console.log(newPhoto);
     try {
       const { data } = await axios.put(
-        `http://localhost:5000/updateSalesperson/${params.id}`,
+        `https://workforce-web-backend.up.railway.app/updateSalesperson/${params.id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

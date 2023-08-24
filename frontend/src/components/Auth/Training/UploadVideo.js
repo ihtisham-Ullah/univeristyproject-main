@@ -13,7 +13,7 @@ function UploadVideo() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getsalesperson")
+      .get("https://workforce-web-backend.up.railway.app/getsalesperson")
       .then((res) => {
         setSalespersons(res.data);
       })
@@ -23,7 +23,7 @@ function UploadVideo() {
   }, []);
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getmedia")
+      .get("https://workforce-web-backend.up.railway.app/getmedia")
       .then((res) => {
         setMediaList(res.data);
       })

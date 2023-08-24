@@ -16,7 +16,7 @@ function ViewTasksfeedback() {
   const getTasksFeedback = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:5000/getTasksFeedback", {
+      const response = await fetch("https://workforce-web-backend.up.railway.app/getTasksFeedback", {
         method: "GET",
         crossDomain: true,
         headers: {
@@ -46,7 +46,7 @@ function ViewTasksfeedback() {
 
   function deleteTasks(id) {
     if (window.confirm("Are you sure you want to delete this Feedback?")) {
-      fetch(`http://localhost:5000/getTasksFeedback/${id}`, {
+      fetch(`https://workforce-web-backend.up.railway.app/getTasksFeedback/${id}`, {
         method: "DELETE",
         crossDomain: true,
       }).then(() => {

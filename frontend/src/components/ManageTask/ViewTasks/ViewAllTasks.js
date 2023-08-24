@@ -11,7 +11,7 @@ function ViewAllTasks() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/getTasksFeedback");
+        const response = await fetch("https://workforce-web-backend.up.railway.app/getTasksFeedback");
         const data = await response.json();
         setRows(data);
       } catch (error) {

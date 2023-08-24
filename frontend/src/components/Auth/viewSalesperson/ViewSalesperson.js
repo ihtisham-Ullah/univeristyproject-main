@@ -8,7 +8,7 @@ function ViewSalesperson() {
   const [list, setList] = useState([]);
 
   const getSalesperson = async () => {
-    fetch("http://localhost:5000/getsalesperson", {
+    fetch("https://workforce-web-backend.up.railway.app/getsalesperson", {
       method: "GET",
       crossDomain: true,
 

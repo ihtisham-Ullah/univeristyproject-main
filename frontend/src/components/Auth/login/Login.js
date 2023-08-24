@@ -51,7 +51,7 @@ function Login() {
   const sendDetailsToServer = () => {
     setState({ ...state, isLoading: true });
     if (state.email.length && state.password.length) {
-      fetch("http://localhost:5000/login-user", {
+      fetch("https://workforce-web-backend.up.railway.app/login-user", {
         method: "POST",
         crossDomain: true,
         headers: {
@@ -104,16 +104,16 @@ function Login() {
   };
 
   return (
-    <div className="container" style={{ marginLeft: "17rem" }}>
+    <div className="container">
       <div className="row">
-        <div className="col-lg-10">
+        <div className="col-lg-10 mx-auto">
           <br />
           <h3 className="mb-3">Login Now</h3>
           <div className="bg-white shadow rounded">
             <div className="row">
-              <div className="col-md-7 pe-0 col-sm-12">
-                <div className="form-left h-100 py-5 px-5">
-                  <form onSubmit={handleSubmitClick} className="row g-4">
+              <div className="col-md-7 col-sm-12">
+                <div className="form-left py-5 px-4">
+                  <form onSubmit={handleSubmitClick} className="row g-3">
                     <div className="col-12">
                       <label>
                         Email<span className="text-danger">*</span>
@@ -132,17 +132,14 @@ function Login() {
                         />
                       </div>
                     </div>
-
+  
                     <div className="col-12">
                       <label>
                         Password<span className="text-danger">*</span>
                       </label>
                       <div className="input-group">
                         <div className="input-group-text">
-                          <i
-                            className="fa fa-unlock-alt"
-                            aria-hidden="true"
-                          ></i>
+                          <i className="fa fa-unlock-alt" aria-hidden="true"></i>
                         </div>
                         <input
                           type="password"
@@ -154,8 +151,8 @@ function Login() {
                         />
                       </div>
                     </div>
-
-                    <div className="col-sm-6">
+  
+                    <div className="col-12">
                       <div className="form-check">
                         <input
                           type="checkbox"
@@ -169,17 +166,17 @@ function Login() {
                         </label>
                       </div>
                     </div>
-
-                    <div className="col-sm-6">
-                      <p className="float-end text-primary">
+  
+                    <div className="col-12">
+                      <p className="text-center text-primary">
                         Forgot <Link to="/Reset">Password</Link>
                       </p>
                     </div>
-
+  
                     <div className="col-12">
                       <button
                         type="submit"
-                        className="btn btn-primary px-4 float-end mt-4"
+                        className="btn btn-primary w-100"
                         disabled={state.isLoading}
                       >
                         {state.isLoading ? "Loading..." : "Login"}
@@ -188,10 +185,9 @@ function Login() {
                   </form>
                 </div>
               </div>
-              <div className="col-md-5 ps-0 d-none d-md-block">
+              <div className="col-md-5 d-none d-md-block">
                 <div className="form-right h-100 bg-primary text-white text-center pt-5">
                   <i className="bi bi-bootstrap"></i>
-
                   <img src={wfm} alt="logo" />
                 </div>
               </div>
@@ -201,5 +197,6 @@ function Login() {
       </div>
     </div>
   );
+  
 }
 export default Login;

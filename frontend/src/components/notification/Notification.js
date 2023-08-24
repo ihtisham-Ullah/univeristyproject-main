@@ -13,7 +13,7 @@ function Notification() {
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const getSalesperson = async () => {
-      const res = await fetch("http://localhost:5000/getsalesperson");
+      const res = await fetch("https://workforce-web-backend.up.railway.app/getsalesperson");
       const data = await res.json();
 
       const salesPersons = [];
@@ -57,7 +57,7 @@ function Notification() {
     };
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/users/",
+        "https://workforce-web-backend.up.railway.app/users/",
         formData,
         { headers: { "Content-Type": "application/json" } }
       );

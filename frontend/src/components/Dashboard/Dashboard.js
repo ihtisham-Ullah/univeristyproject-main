@@ -6,7 +6,7 @@ function Dashboard() {
   const [feedbackCount, setFeedbackCount] = useState(0);
 
   useEffect(() => {
-    fetch("http://localhost:5000/getTasks")
+    fetch("https://workforce-web-backend.up.railway.app/getTasks")
       .then((response) => response.json())
       .then((data) => {
         const totalCount = data.length;
@@ -17,7 +17,7 @@ function Dashboard() {
         console.error("Error fetching tasks:", error);
       });
 
-    fetch("http://localhost:5000/getTasksFeedback")
+    fetch("https://workforce-web-backend.up.railway.app/getTasksFeedback")
       .then((response) => response.json())
       .then((data) => {
         const totalCount = data.length;

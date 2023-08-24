@@ -8,7 +8,7 @@ function Attendance() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("http://localhost:5000/viewattendance");
+      const response = await fetch("https://workforce-web-backend.up.railway.app/viewattendance");
       const data = await response.json();
       setRows(data);
     };

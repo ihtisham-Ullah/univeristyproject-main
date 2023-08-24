@@ -24,7 +24,7 @@ function UpdateTasks() {
 
   useEffect(() => {
     const getTaskType = async () => {
-      const res = await fetch("http://localhost:5000/gettasktype");
+      const res = await fetch("https://workforce-web-backend.up.railway.app/gettasktype");
       const data = await res.json();
       console.log(data);
       setTaskType(await data);
@@ -35,7 +35,7 @@ function UpdateTasks() {
   useEffect(() => {
     const getTaskpriority = async () => {
       try {
-        const res = await fetch("http://localhost:5000/gettaskpriority");
+        const res = await fetch("https://workforce-web-backend.up.railway.app/gettaskpriority");
         const data = await res.json();
         setTaskPriority(await data);
       } catch (err) {
@@ -49,7 +49,7 @@ function UpdateTasks() {
     getSalesperson();
   }, []);
   const getSalesperson = async () => {
-    const res = await fetch("http://localhost:5000/getsalesperson");
+    const res = await fetch("https://workforce-web-backend.up.railway.app/getsalesperson");
     const data = await res.json();
     setSalesPerson(await data);
   };
@@ -58,7 +58,7 @@ function UpdateTasks() {
   }, []);
 
   const updateTasks = async () => {
-    const res = await fetch(`http://localhost:5000/getTasks/${params.id}`);
+    const res = await fetch(`https://workforce-web-backend.up.railway.app/getTasks/${params.id}`);
 
     const data = await res.json();
     setTaskName(data.taskName);
@@ -73,7 +73,7 @@ function UpdateTasks() {
 
   let handleSubmit = async (e) => {
     e.preventDefault();
-    let result = await fetch(`http://localhost:5000/updateTasks/${params.id}`, {
+    let result = await fetch(`https://workforce-web-backend.up.railway.app/updateTasks/${params.id}`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({

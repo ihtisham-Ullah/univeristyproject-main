@@ -8,7 +8,7 @@ function ViewTasks() {
 
   const getTasks = async () => {
     try {
-      const response = await fetch("http://localhost:5000/getTasks", {
+      const response = await fetch("https://workforce-web-backend.up.railway.app/getTasks", {
         method: "GET",
         crossDomain: true,
         headers: {
@@ -39,7 +39,7 @@ function ViewTasks() {
 
   function deleteTasks(id) {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      fetch(`http://localhost:5000/getTasks/${id}`, {
+      fetch(`https://workforce-web-backend.up.railway.app/getTasks/${id}`, {
         method: "DELETE",
         crossDomain: true,
       })

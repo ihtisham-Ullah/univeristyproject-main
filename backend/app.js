@@ -33,17 +33,13 @@ app.use(cors());
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = "hjgdhsgd786876$#$%$^%&*hvnsma";
 
-const mongoUrl =
-  "mongodb+srv://ihtishamullah123:amandara123@cluster0.1nuqc8r.mongodb.net/?retryWrites=true&w=majority";
+const dotenv = require("dotenv");
 
-mongoose
-  .connect(mongoUrl, {
-    useNewUrlParser: true,
-  })
-  .then(() => {
-    console.log("connected to Database");
-  })
-  .catch((e) => console.log(e));
+dotenv.config();
+
+const mongodbb = require("./mongodb");
+
+mongodbb();
 
 require("./RegisterSalesperson");
 require("./Task/TaskPriority");
@@ -92,8 +88,7 @@ const getDataUri = (file) => {
 };
 
 app.post("/register", upload.single("photo"), async (req, res, next) => {
-  //   const { error } = validateUser(req.body);
-  // if (error) return res.status(400).send(error.details[0].message);
+
   console.log(req.body);
 
   const photo = getDataUri(req.file);
@@ -151,12 +146,12 @@ app.put("/updateSalesperson/:id", upload.single("photo"), async (req, res) => {
         height: 1000,
         crop: "scale",
       };
-      // upload photo to Cloudinary and get URL
+    
       const result = await cloudinary.uploader.upload(photo.content, options);
       photoUrl = result.url;
     }
 
-    // update user document in database
+
     const update = {};
     if (req.body.firstName) {
       update.firstName = req.body.firstName;
@@ -227,8 +222,7 @@ require("./adminDetail");
 const Admin = mongoose.model("Admininfo");
 
 app.post("/login-user", async (req, res) => {
-  // const { error } = validateAdmin(req.body);
-  // if (error) return res.status(400).send(error.details[0].message);
+  
   const { email, password } = req.body;
 
   const user = await Admin.findOne({ email });
@@ -334,8 +328,7 @@ app.post("/reset-password/:id/:token", async (req, res) => {
     res.render("index", { email: verify.email, status: "verified" });
     res.json({ status: "Password updated" });
   } catch (error) {
-    //console.log(error);
-    //res.json({ status: "Something Went Wrong" });
+    
   }
 });
 
@@ -495,10 +488,10 @@ app.post("/users", (req, res) => {
   });
 
   var mailOptions = {
-    from: "ihtishamshami180@gmail.com", // sender address
-    to: req.body.to, // list of receivers////this will be our selected emailss heree
-    subject: req.body.subject, // Subject /// here type will
-    text: req.body.description, ///here deciptionn
+    from: "ihtishamshami180@gmail.com", 
+    to: req.body.to, 
+    subject: req.body.subject,
+    text: req.body.description, 
     html: `
       <div style="padding:10px;border-style: ridge">
       <p>You have a new contact request.</p>
@@ -533,7 +526,7 @@ app.get("/viewattendance", async (req, res) => {
 
     const userIds = attendanceList
       .filter((doc) => doc.userId !== null && doc.userId !== undefined)
-      .map((doc) => ObjectId(doc.userId));
+      .map((doc) => new ObjectId(doc.userId));
     const userPromises = userIds.map((id) =>
       User.findOne({ _id: id }).select("-password -address").lean()
     );
@@ -757,6 +750,7 @@ app.delete("/getComplain/:id", async (req, res) => {
   res.send(result);
 });
 
-app.listen(5000, () => {
-  console.log("server started");
+const PORT= process.env.PORT
+app.listen(PORT, () => {
+  console.log("Backend server is running");
 });

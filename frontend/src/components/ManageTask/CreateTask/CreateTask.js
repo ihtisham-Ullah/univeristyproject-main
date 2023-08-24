@@ -30,8 +30,8 @@ function CreateTask() {
   const { id } = useParams();
   const [salesperson, setSalesPerson] = useState("");
   const [Loader, setLoadder] = useState(false);
-  const [submitformLoader, setSubmitformLoader] = useState(false);
-  const [state, setState] = useState({ address: "" });
+  const [submitformLoader] = useState(false);
+
   const [targetLocation, setTargetLocation] = useState({
     location: "",
     lat: "",
@@ -44,7 +44,9 @@ function CreateTask() {
   }, [id]);
 
   const updateTasks = async () => {
-    let { data } = await axios.get(`http://localhost:5000/getTasks/${id}`);
+    let { data } = await axios.get(
+      `https://workforce-web-backend.up.railway.app/${id}`
+    );
     setSingleDataFetch(data);
 
     // Set the initial value of targetLocation when loading the data
@@ -63,12 +65,14 @@ function CreateTask() {
     try {
       setLoadder(true);
       let getSalesperson = await axios.get(
-        "http://localhost:5000/getsalesperson"
+        "https://workforce-web-backend.up.railway.app/getsalesperson"
       );
       let getTaskpriority = await axios.get(
-        "http://localhost:5000/gettaskpriority"
+        "https://workforce-web-backend.up.railway.app/gettaskpriority"
       );
-      let getTaskType = await axios.get("http://localhost:5000/gettasktype");
+      let getTaskType = await axios.get(
+        "https://workforce-web-backend.up.railway.app/gettasktype"
+      );
 
       setSalesPerson(getSalesperson?.data);
       setTaskPriority(getTaskpriority.data);
@@ -86,12 +90,12 @@ function CreateTask() {
       }
 
       let getSalesperson = await axios.get(
-        "http://localhost:5000/getsalesperson"
+        "https://workforce-web-backend.up.railway.app/getsalesperson"
       );
       let firstName = getSalesperson?.data.filter(
         (item) => item._id === data.salespersonId
       )[0].firstName;
-      await fetch("http://localhost:5000/createTask", {
+      await fetch("https://workforce-web-backend.up.railway.app/", {
         method: "POST",
         crossDomain: true,
         headers: {
@@ -125,23 +129,26 @@ function CreateTask() {
   };
 
   let handleUpdateTask = async (Data) => {
-    let result = await fetch(`http://localhost:5000/updateTasks/${id}`, {
-      method: "PUT",
-      crossDomain: true,
-      body: JSON.stringify({
-        ...Data,
-        targetLocation: {
-          location: targetLocation.location,
-          lat: targetLocation.lat,
-          long: targetLocation.long,
+    let result = await fetch(
+      `https://workforce-web-backend.up.railway.app/updateTasks/${id}`,
+      {
+        method: "PUT",
+        crossDomain: true,
+        body: JSON.stringify({
+          ...Data,
+          targetLocation: {
+            location: targetLocation.location,
+            lat: targetLocation.lat,
+            long: targetLocation.long,
+          },
+        }),
+        headers: {
+          "content-type": "application/json",
+          Accept: "application/json",
+          "Access-Control-Allow-origin": "*",
         },
-      }),
-      headers: {
-        "content-type": "application/json",
-        Accept: "application/json",
-        "Access-Control-Allow-origin": "*",
-      },
-    });
+      }
+    );
     result = await result.json();
 
     if (result) {

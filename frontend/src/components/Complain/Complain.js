@@ -5,7 +5,7 @@ function Complain() {
   const [complains, setComplains] = useState([]);
 
   async function fetchComplains() {
-    const response = await fetch("http://localhost:5000/getComplain");
+    const response = await fetch("https://workforce-web-backend.up.railway.app/getComplain");
     const data = await response.json();
     setComplains(data);
   }
@@ -16,7 +16,7 @@ function Complain() {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this complain?")) {
-      fetch(`http://localhost:5000/getComplain/${id}`, {
+      fetch(`https://workforce-web-backend.up.railway.app/getComplain/${id}`, {
         method: "DELETE",
         crossDomain: true,
       })

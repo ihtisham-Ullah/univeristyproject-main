@@ -8,7 +8,7 @@ function ManageTraining() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/getsalesperson")
+      .get("https://workforce-web-backend.up.railway.app/getsalesperson")
       .then((res) => {
         setSalespersons(res.data);
       })
@@ -19,7 +19,7 @@ function ManageTraining() {
 
   const getMedia = async () => {
     axios
-      .get("http://localhost:5000/getmedia")
+      .get("https://workforce-web-backend.up.railway.app/getmedia")
       .then((res) => {
         setMediaList(res.data);
       })
@@ -36,7 +36,7 @@ function ManageTraining() {
     try {
       const confirmDelete = window.confirm("Are you sure you want to delete this video?");
       if (confirmDelete) {
-        await fetch(`http://localhost:5000/getmedia/${id}`, {
+        await fetch(`https://workforce-web-backend.up.railway.app/getmedia/${id}`, {
           method: "DELETE",
         }).then((result) => {
           result.json().then((resp) => {

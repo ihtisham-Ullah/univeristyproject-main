@@ -15,7 +15,7 @@ export default class Reset extends Component {
     const { email } = this.state;
     console.log(email);
     //alert("email is sent");
-    fetch("http://localhost:5000/forgot-password", {
+    fetch("https://workforce-web-backend.up.railway.app/forgot-password", {
       method: "POST",
       crossDomain: true,
       headers: {

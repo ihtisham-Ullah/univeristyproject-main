@@ -10,7 +10,7 @@ function SalespersonAttendance() {
 
   const handleDeleteRow = async (id, index) => {
     try {
-      await fetch(`http://localhost:5000/viewattendance/${id}`, {
+      await fetch(`https://workforce-web-backend.up.railway.app/viewattendance/${id}`, {
         method: "DELETE",
       }).then((result) => {
         result.json().then((resp) => {
